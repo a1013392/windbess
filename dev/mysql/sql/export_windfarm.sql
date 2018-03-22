@@ -8,18 +8,46 @@ USE windfarm
 
 SET @start_time = '2017-11-01 00:00:00', @end_time = '2017-11-30 23:55:00';
 
+\! echo "SELECT * FROM uigf_5mpd, wind_meas INTO OUTFILE /data/uigf_meas.dat"
+SELECT f5.*, wm.time_meas_utc, dt.date_time_aet, wm.wind_act_kw, wm.wind_theo_kw, wm.wind_sdc
+FROM uigf_5mpd f5, wind_meas wm, date_time dt
+WHERE f5.duid = wm.duid 
+AND ADDTIME(f5.time_pred_utc, '00:05:00') = wm.time_meas_utc
+AND wm.time_meas_utc = dt.date_time_utc
+AND f5.time_pred_utc >= @start_time AND f5.time_pred_utc <= @end_time
+ORDER BY f5.duid, f5.time_pred_utc
+INTO OUTFILE '/data/uigf_meas.dat'
+COLUMNS TERMINATED BY '\t'
+;
+
+/*
+\! echo "SELECT * FROM uigf_5mpd, wind_meas INTO OUTFILE /data/nmae_5min.dat"
+SELECT f5.duid, f5.time_pred_utc, f5.wind_pred_5m_kw, wm.time_meas_utc, wm.wind_act_kw, wm.wind_sdc
+FROM uigf_5mpd f5, wind_meas wm
+WHERE f5.duid = wm.duid AND wm.time_meas_utc = ADDTIME(f5.time_pred_utc, '00:05:00')
+AND f5.time_pred_utc >= @start_time AND f5.time_pred_utc <= @end_time 
+AND f5.wind_pred_5m_kw > 0.0 AND wm.wind_act_kw > 0.0
+AND wm.wind_sdc = 0
+ORDER BY f5.duid, f5.time_pred_utc
+INTO OUTFILE '/data/nmae_5min.csv'
+COLUMNS TERMINATED BY ','
+;
+ */
+
+/*
 \! echo "SELECT * FROM uigf_5mpd, dispatch INTO OUTFILE /data/uigf_dispatch.dat"
-SELECT gf.*, dp.wind_avail_kw, dp.wind_clear_kw, dp.dispatch_cap
-FROM uigf_5mpd gf, dispatch dp
-WHERE gf.duid = dp.duid AND ADDTIME(gf.time_pred_utc, '00:05:00') = dp.time_settle_utc
-AND gf.time_pred_utc >= @start_time AND gf.time_pred_utc <= @end_time
-ORDER BY gf.duid, gf.time_pred_utc
+SELECT f5.*, dp.wind_avail_kw, dp.wind_clear_kw, dp.dispatch_cap
+FROM uigf_5mpd f5, dispatch dp
+WHERE f5.duid = dp.duid AND ADDTIME(f5.time_pred_utc, '00:05:00') = dp.time_settle_utc
+AND f5.time_pred_utc >= @start_time AND f5.time_pred_utc <= @end_time
+ORDER BY f5.duid, f5.time_pred_utc
 INTO OUTFILE '/data/uigf_dispatch.dat'
 COLUMNS TERMINATED BY '\t'
 ;
 -- SETTLEMENTDATE (converted to UTC) in the Next Day Dispatch file corresponds
 -- to the UIGF forecast for the dispatch interval TimePred_UTC (5-min horizon, 
 -- 5-min frequency, 5-min resolution)
+ */
 
 /*
 \! echo "SELECT * FROM uigf_5mpd INTO OUTFILE /data/uigf_5mpd.csv"
@@ -53,4 +81,4 @@ ORDER BY duid, time_pred_utc
 INTO OUTFILE '/data/uigf_5mpd.csv'
 COLUMNS TERMINATED BY ','
 ;
-*/
+ */

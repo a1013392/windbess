@@ -24,7 +24,7 @@ epsilon = 1e-04;    % Round-off tolerance to account for errors arising
 
 delta = 1/12;   % Conversion factor from MW to MWh for given dispatch interval
                 % (i.e., 5 minutes = 1/12 of an hour)
-eta = sqrt(0.80);   % One-way battery charge/discharge efficiency (measured
+eta = 0.90;   % One-way battery charge/discharge efficiency (measured
                     % efficiency of the Telsa/Neoen Hornsdale Power Reserve
                     % over the full month of December 2017)
 nmae = 0.05;    % Normalised mean absolute error of unconstrained intermittent
@@ -32,7 +32,7 @@ nmae = 0.05;    % Normalised mean absolute error of unconstrained intermittent
 base = 100;     % Base (MW and MWh) for per-unit (dimensionless) quantities
 
 % Define power and energy in terms of per unit base quantity
-windcap = 0.99*base;    % Wind farm registered capacity (MW)
+windcap = 1.00*base;    % Wind farm registered capacity (MW)
 battcap = 1.00*base;    % Battery storage capacity (MWh)
 battrt = 1.00*base;     % Battery rated power (MW)
 
@@ -42,13 +42,20 @@ B = [ delta*eta -delta/eta 0; 1 0 0; 0 1 0; 0 0 1 ];
 C = [ 1 0 0 0; 0 -1 1 1 ];
 [ K, L ] = mpckl( m, s, q, d, n, A, B, C );
 
-% Read UIGF forecasts and dispatch data from input file 
-uigffile = '/Users/starca/projects/windbess/dev/data/in/uigf_dispatch.dat';
-F = uigfread( uigffile );
+% Read UIGF forecasts and SCADA (measured) data from input file 
+uigffile = '/Users/starca/projects/windbess/dev/data/in/uigf_meas.dat';
+[ N, duid, uigfutc, uigf, measutc, measaet, pwmeas, sdcmeas ] = ...
+    uigfread( uigffile );
 % Calculate the number of time steps in the simulation horizon
-N = size( F{1,1},1 );
 fprintf( 'UIGF file is: %s\n', uigffile );
 fprintf( 'Number of time steps in simulation horizon, N = %d\n', N );
+
+% Open simulation output file and write header
+simfile = '/Users/starca/projects/windbess/dev/data/out/windbess_snowtwn1.dat';
+simfid = fopen( simfile, 'w' );
+fprintf( simfid, ['# DUID\tDptchUTC\tDptchAET\tUIGFUTC\tPwrDptch\t', ...
+    'SetPtPwrDsptch\tBESSChrg\tPwrChrg\tPwrDchrg\tBESSSOC\tPwrWind\t', ...
+    'UIGF5m\tPwrGTSetPt\tSDCMeas\n'] );
 
 % Define upper and lower bounds on state variables: battery state of charge 
 % (SOC) e; battery charge command p_{b+}; battery discharge command p_{b-};
@@ -76,7 +83,8 @@ z0 = [ x0; ulast ];
 % Initialise wind power predictions and set points for power dispatched to
 % the grid
 sppd = zeros(n,1);
-[ pw, sppd ] = wppsppd( 1, n, F, sppd, x0, zlb(1), zub(1), windcap, nmae );
+[ pw, sppd ] = wppsppd( n, uigf(1,:), pwmeas(1), sdcmeas(1), sppd, ...
+    x0, zlb(1), zub(1), windcap, nmae );
 
 % Construct vector of set points (battery SOC and power dispatched to the 
 % grid) for process outputs over the prediction horizon
@@ -129,35 +137,32 @@ for k = 1:N     % For each time step in simulation
         pdgtspmwh = pdgtspmwh + (y(m) - sp(m))*delta;
     end
     
-    % Populate output matrix
-    for j = 1:m
-        Y(k,j) = y(j);
-        Y(k,m+j) = sp(j);
-    end
-    for j = 1:q
-        Y(k,2*m+j) = u(j);
-    end
-    for j = 1:d
-        Y(k,2*m+q+j) = w(j);
-    end
+    % Write output from simulation iteration to file
+    measutck = datestr( measutc(k), 'yyyy-mm-dd HH:MM:SS' );
+    measaetk = datestr( measaet(k), 'yyyy-mm-dd HH:MM:SS' );
+    uigfutck = datestr( uigfutc(k), 'yyyy-mm-dd HH:MM:SS' );
+    uigf5m = max( [0.0, uigf(k,1)] );
+    pdgtsp = max( [0.0, y(2)-sp(2)] );
+    fprintf( simfid, ...
+'%s\t%s\t%s\t%s\t%.6f\t%.6f\t%d\t%.6f\t%.6f\t%.6f\t%.6f\t%.6f\t%.6f\t%d\n', ...
+        duid, measutck, measaetk, uigfutck, y(2), sp(2),  w(1), u(1), u(2), ...
+        y(1), u(3), uigf5m, pdgtsp, sdcmeas(k) );
 
     % Reset variables for next simulation iteration
     x0 = y(1);
     ulast = u(1:q);
     z0 = [ x0; ulast ];
     if ( k < N )
-        [ pw, sppd ] = wppsppd( ...
-            k+1, n, F, sppd, x0, zlb(1), zub(1), windcap, nmae );
+        [ pw, sppd ] = wppsppd( n, uigf(k+1,:), pwmeas(k+1), sdcmeas(k+1), ...
+            sppd, x0, zlb(1), zub(1), windcap, nmae );
         spsoc = ones( n, 1 ) * x0;
         sp = spsocpd( m, n, spsoc, sppd );
     end
 
 end
 
-% Write simulation results to file
-yfile = sprintf( ...
-    '/Users/starca/projects/windbess/dev/data/out/windbess_snowtwn1.csv');
-dlmwrite( yfile, Y, 'precision', 8 );
+% Close simulation output file
+fclose( simfid );
 
 % Write simulation results to terminal
 fprintf( 'Number of dispatch intervals: %d\n', dpcnt );
