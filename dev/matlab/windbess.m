@@ -1,6 +1,10 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Wind power dispatch with battery energy storage using state-space model
-% predictive control (MPC).
+% Wind power dispatch with battery energy storage employing state-space 
+% model predictive control (MPC).  A battery energy storage system coupled
+% to a wind farmn is used to firm-up power dispatched to grid, which is
+% scheduled during pre-dispatch on the basis of unconstrained intermittent
+% generation forecasts (UIGF) produced by the Australian Wind Energy 
+% Forecasting System.
 %
 % Author:  Silvio Tarca
 % Date:    March 2018
