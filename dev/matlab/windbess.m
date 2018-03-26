@@ -19,7 +19,7 @@ d = 1;          % Number of binary (dummy) variables for each time interval
                 % in the control horizon, w
 n = 6;          % Number of time intervals in prediciton and control horizons
  
-epsilon = 1e-04;    % Round-off tolerance to account for errors arising
+epsilon = 1e-12;    % Round-off tolerance to account for errors arising
                     % from floating point operations
 
 delta = 1/12;   % Conversion factor from MW to MWh for given dispatch interval
@@ -53,7 +53,7 @@ fprintf( 'Number of time steps in simulation horizon, N = %d\n', N );
 % Open simulation output file and write header
 simfile = '/Users/starca/projects/windbess/dev/data/out/windbess_snowtwn1.dat';
 simfid = fopen( simfile, 'w' );
-fprintf( simfid, ['# DUID\tDptchUTC\tDptchAET\tUIGFUTC\tPwrDptch\t', ...
+fprintf( simfid, ['#DUID\tDptchUTC\tDptchAET\tUIGFUTC\tPwrDptch\t', ...
     'SetPtPwrDsptch\tBESSChrg\tPwrChrg\tPwrDchrg\tBESSSOC\tPwrWind\t', ...
     'UIGF5m\tPwrGTSetPt\tSDCMeas\n'] );
 
