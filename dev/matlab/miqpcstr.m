@@ -12,8 +12,24 @@ function [ G, h ] = miqpcstr( m, q, d, n, delta, eta, z0, pw, zlb, zub )
     % zub = upper bounds on [ e; p_{b+};  p_{b-};  p_{w} ]
     % Note that there is a binary (dummy) variable, indicating whether the
     % battery is charging, for each time interval in the control horizon
-
-    % State of charge of the battery
+    
+    % For dispatch of wind power with battery energy storage assume that 
+    % windfarm cannot draw power from the grid, i.e., p_{d} >= 0, where
+    % p_{d}(t+1) = p_{b-}(t) - p_b{+}(t) + p_{w}(t)
+    g0 = [ 1 -1 -1 ];
+    G0 = zeros( n, q*n+d*n );
+    h0 = zeros( n, 1 );
+    for i = 0:n-1
+        j = 0;
+        while ( j <= i )
+            G0(i+1,j*q+1:j*q+q) = g0;
+            j = j + 1;
+        end
+        h0(i+1) = z0(3) - z0(2) + z0(4);
+    end
+    
+    % State of charge of the battery, where
+    % e(t+1) = e(t) + delta*eta*p_{b+}(t) - delta/eta*p_b{-}(t)
     g1 = [ delta*eta -delta/eta 0 ];
     G1 = zeros( 2*n, q*n+d*n );
     h1 = zeros( 2*n, 1 );
@@ -90,8 +106,8 @@ function [ G, h ] = miqpcstr( m, q, d, n, delta, eta, z0, pw, zlb, zub )
     end
 
     % Concatenate constraint coefficients and thresholds
-    G = [ G1; G2; G3; G4; G5 ];
-    h = [ h1; h2; h3; h4; h5 ];
+    G = [ G0; G1; G2; G3; G4; G5 ];
+    h = [ h0; h1; h2; h3; h4; h5 ];
 
 end
 

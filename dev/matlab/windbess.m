@@ -28,17 +28,17 @@ epsilon = 1e-12;    % Round-off tolerance to account for errors arising
 
 delta = 1/12;   % Conversion factor from MW to MWh for given dispatch interval
                 % (i.e., 5 minutes = 1/12 of an hour)
-eta = 0.90;   % One-way battery charge/discharge efficiency (measured
+eta = sqrt(0.80);   % One-way battery charge/discharge efficiency (measured
                     % efficiency of the Telsa/Neoen Hornsdale Power Reserve
                     % over the full month of December 2017)
 nmae = 0.05;    % Normalised mean absolute error of unconstrained intermittent
                 % generation forecasts (UIGF)
-base = 100;     % Base (MW and MWh) for per-unit (dimensionless) quantities
+base = 99.0;    % Base (MW and MWh) for per-unit (dimensionless) quantities
 
 % Define power and energy in terms of per unit base quantity
 windcap = 1.00*base;    % Wind farm registered capacity (MW)
-battcap = 1.00*base;    % Battery storage capacity (MWh)
-battrt = 1.00*base;     % Battery rated power (MW)
+battcap = 0.50*base;    % Battery storage capacity (MWh)
+battrt = 0.50*base;     % Battery rated power (MW)
 
 % Define matrices describing incremental state-space model
 A = [ 1 delta*eta -delta/eta 0; 0 1 0 0; 0 0 1 0; 0 0 0 1 ];
@@ -55,11 +55,24 @@ fprintf( 'UIGF file is: %s\n', uigffile );
 fprintf( 'Number of time steps in simulation horizon, N = %d\n', N );
 
 % Open simulation output file and write header
-simfile = '/Users/starca/projects/windbess/dev/data/out/windbess_snowtwn1.dat';
+simfile = '/Users/starca/projects/windbess/dev/data/out/windbess_sim_snowtwn1.dat';
 simfid = fopen( simfile, 'w' );
 fprintf( simfid, ['#DUID\tDptchUTC\tDptchAET\tUIGFUTC\tPwrDptch\t', ...
     'SetPtPwrDsptch\tBESSChrg\tPwrChrg\tPwrDchrg\tBESSSOC\tPwrWind\t', ...
-    'UIGF5m\tPwrGTSetPt\tSDCMeas\n'] );
+    'UIGF5min\tPwrDptchSurplus\tPwrDptchDeficit\tSDCMeas\n'] );
+
+% Open simulation results file for writing or appending, and in the former
+% case write header
+rsltfile = '/Users/starca/projects/windbess/dev/data/out/windbess_rslt_snowtwn1.dat';
+if ( exist( rsltfile, 'file' ) )
+    rsltfid = fopen( rsltfile, 'a' );
+else
+    rsltfid = fopen( rsltfile, 'w' );
+    fprintf( rsltfid, ['#DUID\tSimHrzn\tCtrlHrzn\tWindCap\tBattCap\tBattRt\t', ...
+        'CtrlWgt\tDptchInt\tMeanAbsErr\tNormMeanAbsErr\tMeanSqrErr\t', ...
+        'SurplusDptchInt\tMeanDptchSurplus\tNormMeanDptchSurplus\t', ...
+        'DeficitDptchInt\tMeanDptchDeficit\tNormMeanDptchDeficit\n'] );
+end
 
 % Define upper and lower bounds on state variables: battery state of charge 
 % (SOC) e; battery charge command p_{b+}; battery discharge command p_{b-};
@@ -72,6 +85,7 @@ lambda = 0.0;
 omega = [ 0.0; 1.0 ];
 psi = [ 1.0; 1.0; 0.0 ];
 [ lambda, Omega, Psi ] = mpcwgt( m, q, d, n, lambda, omega, psi );
+ctrlwgt = '1^n';    % Description of weighting scheme over control horizon
 
 % Set options for MATLAB/CPLEX mixed integer quadratic program (MIQP)
 %options = cplexoptimset( 'Display', 'off', 'TolFun', 1e-12, 'TolX', 1e-12 );
@@ -100,11 +114,13 @@ sp = spsocpd( m, n, spsoc, sppd );
 Y = zeros( N, m+m+q+d );
 % Initialise measures quantifying the deviation in power dispatched to the
 % grid relative to scheduled power (set point)
-dpcnt = 0;      % Dispatch count
-mae = 0.0;      % Mean absolute error (MW)
-mse = 0.0;      % Mean square error (MW)
-pdgtspcnt = 0;  % Dispatch count where power dispatched exceed set point
-pdgtspmwh = 0.0;    % Energy dispatched when power exceeds set point (MWh)
+dpcnt = 0;      % Dispatch interval count
+surpcnt = 0;    % Dispatch interval surplus count (power dispatched > set point)
+dfctcnt = 0;    % Dispatch interval deficit count (power dispatched < set point)
+sumabserr = 0.0;    % Sum of absolute errors (MW)
+sumsqrerr = 0.0;    % Sum of squared errors (MW)
+sumsurp = 0.0;      % Sum of surplus power dispatched (MW)
+sumdfct = 0.0;      % Sum of deficit power dispatched (MW)
 
 % Define quadratic term of performance index (objective function of MIQP)
 H = transpose(L)*Omega*L + lambda*Psi;
@@ -132,13 +148,18 @@ for k = 1:N     % For each time step in simulation
     % during the next dispatch interval exceeds zero
     if ( sp(m) > epsilon )
         dpcnt = dpcnt + 1;
-        mae = mae + abs( y(m) - sp(m) );
-        mse = mse + (y(m) - sp(m))^2;
+        sumabserr = sumabserr + abs( y(m) - sp(m) );
+        sumsqrerr = sumsqrerr + (y(m) - sp(m))^2;
     end
     % Accumulate statistics when power dispatched to the grid exceeds set point
     if ( y(m) > sp(m) + epsilon )
-        pdgtspcnt = pdgtspcnt + 1;
-        pdgtspmwh = pdgtspmwh + (y(m) - sp(m))*delta;
+        surpcnt = surpcnt + 1;
+        sumsurp = sumsurp + ( y(m) - sp(m) );
+    end
+    % Accumulate statistics when power dispatched to the grid falls below set point
+    if ( y(m) + epsilon < sp(m) )
+        dfctcnt = dfctcnt + 1;
+        sumdfct = sumdfct + ( sp(m) - y(m) );
     end
     
     % Write output from simulation iteration to file
@@ -146,11 +167,12 @@ for k = 1:N     % For each time step in simulation
     measaetk = datestr( measaet(k), 'yyyy-mm-dd HH:MM:SS' );
     uigfutck = datestr( uigfutc(k), 'yyyy-mm-dd HH:MM:SS' );
     uigf5m = max( [0.0, uigf(k,1)] );
-    pdgtsp = max( [0.0, y(2)-sp(2)] );
+    pdsurp = max( [0.0, y(2)-sp(2)] );
+    pddfct = max( [0.0, sp(2)-y(2)] );
     fprintf( simfid, ...
-'%s\t%s\t%s\t%s\t%.6f\t%.6f\t%d\t%.6f\t%.6f\t%.6f\t%.6f\t%.6f\t%.6f\t%d\n', ...
+'%s\t%s\t%s\t%s\t%.6f\t%.6f\t%d\t%.6f\t%.6f\t%.6f\t%.6f\t%.6f\t%.6f\t%.6f\t%d\n', ...
         duid, measutck, measaetk, uigfutck, y(2), sp(2),  w(1), u(1), u(2), ...
-        y(1), u(3), uigf5m, pdgtsp, sdcmeas(k) );
+        y(1), u(3), uigf5m, pdsurp, pddfct, sdcmeas(k) );
 
     % Reset variables for next simulation iteration
     x0 = y(1);
@@ -165,19 +187,24 @@ for k = 1:N     % For each time step in simulation
 
 end
 
-% Close simulation output file
-fclose( simfid );
+% Calculate summary statistics for simulation run
+mae = sumabserr / dpcnt;        % Mean absolute error
+nmae = mae / windcap * 100;     % Normalised mean absolute error
+mse = sumsqrerr / dpcnt;        % Mean squared error       	
+msurp = sumsurp / surpcnt;      % Mean surplus power dispatched
+nmsurp = msurp / windcap * 100; % Normalised mean surplus power dispatched
+mdfct = sumdfct / dfctcnt;      % Mean deficit power dispatched
+nmdfct = mdfct / windcap * 100; % Normalised mean deficit power dispatched
 
-% Write simulation results to terminal
-fprintf( 'Number of dispatch intervals: %d\n', dpcnt );
-fprintf( 'Mean absolute error: %.3f MW\n', mae/dpcnt );
-fprintf( 'Normalised mean absolute error: %.3f%%\n', (mae/dpcnt)/windcap*100 );
-fprintf( 'Mean square error: %.3f MW^2\n', mse/dpcnt );
-fprintf( ...
-'Number of dispatch intervals when power dispatched exceeds set point: %d\n', ...
-    pdgtspcnt );
-fprintf( 'Energy dispatched when power exceeds set point: %.3f MWh\n\n', ...
-    pdgtspmwh );
+% Write simulation results to file
+fprintf( rsltfid, ...
+    '%s\t%d\t%d\t%f\t%f\t%f\t%s\t%d\t%f\t%f\t%f\t%d\t%f\t%f\t%d\t%f\t%f\n', ...
+    duid, N, n, windcap, battcap, battrt, ctrlwgt, dpcnt, mae, nmae, mse, ...
+    surpcnt, msurp, nmsurp, dfctcnt, mdfct, nmdfct );
+
+% Close simulation output and results files
+fclose( simfid );
+fclose( rsltfid );
 
 timeelap = toc( timesta );  % Measure elapsed time for execution of program
 fprintf( 'Elapsed time: %.1f seconds\n', timeelap );

@@ -1,4 +1,4 @@
-!/bin/bash
+#!/bin/bash
 #./ndd.sh
 # Shell script to filter daily Next Day Dispatch files on dispatch unit
 # identifier (DUID).  It concatenates records (rows) filtered on DUID into

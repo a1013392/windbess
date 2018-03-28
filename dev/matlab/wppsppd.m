@@ -1,8 +1,7 @@
 function [ wpp, sppd ] = wppsppd( ...
     n, uigf, pw, sdc, sppd, soc, socmin, socmax, windcap, nmae )
 % Determines wind power predictions and set points, measured in MW, from  
-% unconstrained intermittent generation forecasts (UIGF).  UIGF forecasts 
-% in cell array F are reported in kW.
+% unconstrained intermittent generation forecasts (UIGF). 
 
     epsilon = 1e-12;
     nowind = false;
