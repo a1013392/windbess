@@ -6,9 +6,15 @@
 \! echo "USE windfarm"
 USE windfarm
 
-SET @start_time = '2017-11-01 00:00:00', @end_time = '2017-11-30 23:55:00';
+SET @start_time = '2017-03-31 00:00:00', @end_time = '2017-12-31 23:55:00';
+SELECT @start_time, @end_time;
 
-\! echo "SELECT * FROM uigf_5mpd, wind_meas INTO OUTFILE /data/uigf_meas.dat"
+/*****************************************************************************
+ * Export data that is input to simulations of wind power dispatch using
+ * battery energy storage to a tab delimited file.  And insert simulation  
+ * input data into table wind_sim for analysis
+ */
+\! echo "SELECT * FROM uigf_5mpd, wind_meas, date_time INTO OUTFILE /data/uigf_meas.dat"
 SELECT f5.*, wm.time_meas_utc, dt.date_time_aet, wm.wind_act_kw, wm.wind_theo_kw, wm.wind_sdc
 FROM uigf_5mpd f5, wind_meas wm, date_time dt
 WHERE f5.duid = wm.duid 
@@ -20,7 +26,17 @@ INTO OUTFILE '/data/uigf_meas.dat'
 COLUMNS TERMINATED BY '\t'
 ;
 
-/*
+\! echo "INSERT INTO wind_sim SELECT * FROM uigf_5mpd, wind_meas, date_time"
+INSERT INTO wind_sim
+SELECT f5.*, wm.time_meas_utc, dt.date_time_aet, wm.wind_act_kw, wm.wind_theo_kw, wm.wind_sdc
+FROM uigf_5mpd f5, wind_meas wm, date_time dt
+WHERE f5.duid = wm.duid 
+AND ADDTIME(f5.time_pred_utc, '00:05:00') = wm.time_meas_utc
+AND wm.time_meas_utc = dt.date_time_utc
+AND f5.time_pred_utc >= @start_time AND f5.time_pred_utc <= @end_time
+;
+
+/*****************************************************************************
 \! echo "SELECT * FROM uigf_5mpd, wind_meas INTO OUTFILE /data/nmae_5min.dat"
 SELECT f5.duid, f5.time_pred_utc, f5.wind_pred_5m_kw, wm.time_meas_utc, wm.wind_act_kw, wm.wind_sdc
 FROM uigf_5mpd f5, wind_meas wm
@@ -34,7 +50,7 @@ COLUMNS TERMINATED BY ','
 ;
  */
 
-/*
+/*****************************************************************************
 \! echo "SELECT * FROM uigf_5mpd, dispatch INTO OUTFILE /data/uigf_dispatch.dat"
 SELECT f5.*, dp.wind_avail_kw, dp.wind_clear_kw, dp.dispatch_cap
 FROM uigf_5mpd f5, dispatch dp
@@ -49,7 +65,7 @@ COLUMNS TERMINATED BY '\t'
 -- 5-min frequency, 5-min resolution)
  */
 
-/*
+/*****************************************************************************
 \! echo "SELECT * FROM uigf_5mpd INTO OUTFILE /data/uigf_5mpd.csv"
 SELECT duid, time_pred_utc, time_scada_utc,
 	CAST(wind_pred_5m_kw AS DECIMAL(12,3)) wind_pred_5m_kw,
