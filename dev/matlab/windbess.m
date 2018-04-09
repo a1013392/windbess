@@ -31,14 +31,15 @@ delta = 1/12;   % Conversion factor from MW to MWh for given dispatch interval
 eta = sqrt(0.80);   % One-way battery charge/discharge efficiency (measured
                     % efficiency of the Telsa/Neoen Hornsdale Power Reserve
                     % over the full month of December 2017)
-nmae = 0.05;    % Normalised mean absolute error of unconstrained intermittent
-                % generation forecasts (UIGF)
 base = 99.0;    % Base (MW and MWh) for per-unit (dimensionless) quantities
 
 % Define power and energy in terms of per unit base quantity
-windcap = 1.00*base;    % Wind farm registered capacity (MW)
-battcap = 0.50*base;    % Battery storage capacity (MWh)
-battrt = 0.50*base;     % Battery rated power (MW)
+windcap = 1.00*base;        % Wind farm registered capacity (MW)
+battcap = 0.50*base;        % Battery storage capacity (MWh)
+battrt = 0.50*base;         % Battery rated power (MW)
+deltacntl = 0.05*battcap;   % Maximum "delta control" command -- amount 
+                            % that wind power set point is limited below 
+                            % predicted available capacity 
 
 % Define matrices describing incremental state-space model
 A = [ 1 delta*eta -delta/eta 0; 0 1 0 0; 0 0 1 0; 0 0 0 1 ];
@@ -47,7 +48,7 @@ C = [ 1 0 0 0; 0 -1 1 1 ];
 [ K, L ] = mpckl( m, s, q, d, n, A, B, C );
 
 % Read UIGF forecasts and SCADA (measured) data from input file 
-uigffile = '/Users/starca/projects/windbess/dev/data/in/uigf_meas.dat';
+uigffile = '/Users/starca/projects/windbess/dev/data/in/uigf_meas_1711.dat';
 [ N, duid, uigfutc, uigf, measutc, measaet, pwmeas, sdcmeas ] = ...
     uigfread( uigffile );
 % Calculate the number of time steps in the simulation horizon
@@ -102,7 +103,7 @@ z0 = [ x0; ulast ];
 % the grid
 sppd = zeros(n,1);
 [ pw, sppd ] = wppsppd( n, uigf(1,:), pwmeas(1), sdcmeas(1), sppd, ...
-    x0, zlb(1), zub(1), windcap, nmae );
+    x0, zlb(1), zub(1), deltacntl, epsilon );
 
 % Construct vector of set points (battery SOC and power dispatched to the 
 % grid) for process outputs over the prediction horizon
@@ -171,7 +172,7 @@ for k = 1:N     % For each time step in simulation
     pddfct = max( [0.0, sp(2)-y(2)] );
     fprintf( simfid, ...
 '%s\t%s\t%s\t%s\t%.6f\t%.6f\t%d\t%.6f\t%.6f\t%.6f\t%.6f\t%.6f\t%.6f\t%.6f\t%d\n', ...
-        duid, measutck, measaetk, uigfutck, y(2), sp(2),  w(1), u(1), u(2), ...
+        duid, measutck, measaetk, uigfutck, y(2), sp(2), w(1), u(1), u(2), ...
         y(1), u(3), uigf5m, pdsurp, pddfct, sdcmeas(k) );
 
     % Reset variables for next simulation iteration
@@ -180,7 +181,7 @@ for k = 1:N     % For each time step in simulation
     z0 = [ x0; ulast ];
     if ( k < N )
         [ pw, sppd ] = wppsppd( n, uigf(k+1,:), pwmeas(k+1), sdcmeas(k+1), ...
-            sppd, x0, zlb(1), zub(1), windcap, nmae );
+            sppd, x0, zlb(1), zub(1), deltacntl, epsilon );
         spsoc = ones( n, 1 ) * x0;
         sp = spsocpd( m, n, spsoc, sppd );
     end

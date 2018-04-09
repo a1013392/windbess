@@ -1,9 +1,8 @@
 function [ wpp, sppd ] = wppsppd( ...
-    n, uigf, pw, sdc, sppd, soc, socmin, socmax, windcap, nmae )
+    n, uigf, pw, sdc, sppd, soc, socmin, socmax, deltacntl, epsilon )
 % Determines wind power predictions and set points, measured in MW, from  
 % unconstrained intermittent generation forecasts (UIGF). 
 
-    epsilon = 1e-12;
     nowind = false;
     wpp = zeros(n,1);   % Initialise predicted wind power vector
     
@@ -30,15 +29,16 @@ function [ wpp, sppd ] = wppsppd( ...
     else
         socmid = ( socmin + socmax ) / 2.0;
         % Fix power dispatched set point to predicted wind power at end of
-        % prediction/control horizon if battery SOC exceeds threshold.
-        % Otherwise, fix power dispatched set point to a fraction of the 
-        % predicted wind power which depends on normalised mean absolute
-        % error
-        if ( soc - epsilon > socmid )
+        % prediction/control horizon if battery SOC equals or exceeds
+        % threshold.  Otherwise, fix power dispatched set point to a fraction 
+        % of the predicted wind power which depends on normalised mean
+        % absolute error.  Note that if soc = socmax = socmid = socmin = 0.0, 
+        % then sppd(n) is set to wpp(n)
+        if ( soc > socmid - epsilon )
             sppd(n) = wpp(n);
         else
-            wppdelta = windcap * nmae * (socmid - soc) / (socmid - socmin);
-            sppd(n) = max( [0.0, wpp(n) - wppdelta ] );
+            wppdelta = deltacntl * (socmid - soc) / (socmid - socmin);
+            sppd(n) = max( [0.0, wpp(n) - wppdelta ] ); 
         end
     end
     
