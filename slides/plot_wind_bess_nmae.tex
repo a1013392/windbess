@@ -1,0 +1,116 @@
+% GNUPLOT: LaTeX picture with Postscript
+\begingroup
+  \makeatletter
+  \providecommand\color[2][]{%
+    \GenericError{(gnuplot) \space\space\space\@spaces}{%
+      Package color not loaded in conjunction with
+      terminal option `colourtext'%
+    }{See the gnuplot documentation for explanation.%
+    }{Either use 'blacktext' in gnuplot or load the package
+      color.sty in LaTeX.}%
+    \renewcommand\color[2][]{}%
+  }%
+  \providecommand\includegraphics[2][]{%
+    \GenericError{(gnuplot) \space\space\space\@spaces}{%
+      Package graphicx or graphics not loaded%
+    }{See the gnuplot documentation for explanation.%
+    }{The gnuplot epslatex terminal needs graphicx.sty or graphics.sty.}%
+    \renewcommand\includegraphics[2][]{}%
+  }%
+  \providecommand\rotatebox[2]{#2}%
+  \@ifundefined{ifGPcolor}{%
+    \newif\ifGPcolor
+    \GPcolorfalse
+  }{}%
+  \@ifundefined{ifGPblacktext}{%
+    \newif\ifGPblacktext
+    \GPblacktexttrue
+  }{}%
+  % define a \g@addto@macro without @ in the name:
+  \let\gplgaddtomacro\g@addto@macro
+  % define empty templates for all commands taking text:
+  \gdef\gplbacktext{}%
+  \gdef\gplfronttext{}%
+  \makeatother
+  \ifGPblacktext
+    % no textcolor at all
+    \def\colorrgb#1{}%
+    \def\colorgray#1{}%
+  \else
+    % gray or color?
+    \ifGPcolor
+      \def\colorrgb#1{\color[rgb]{#1}}%
+      \def\colorgray#1{\color[gray]{#1}}%
+      \expandafter\def\csname LTw\endcsname{\color{white}}%
+      \expandafter\def\csname LTb\endcsname{\color{black}}%
+      \expandafter\def\csname LTa\endcsname{\color{black}}%
+      \expandafter\def\csname LT0\endcsname{\color[rgb]{1,0,0}}%
+      \expandafter\def\csname LT1\endcsname{\color[rgb]{0,1,0}}%
+      \expandafter\def\csname LT2\endcsname{\color[rgb]{0,0,1}}%
+      \expandafter\def\csname LT3\endcsname{\color[rgb]{1,0,1}}%
+      \expandafter\def\csname LT4\endcsname{\color[rgb]{0,1,1}}%
+      \expandafter\def\csname LT5\endcsname{\color[rgb]{1,1,0}}%
+      \expandafter\def\csname LT6\endcsname{\color[rgb]{0,0,0}}%
+      \expandafter\def\csname LT7\endcsname{\color[rgb]{1,0.3,0}}%
+      \expandafter\def\csname LT8\endcsname{\color[rgb]{0.5,0.5,0.5}}%
+    \else
+      % gray
+      \def\colorrgb#1{\color{black}}%
+      \def\colorgray#1{\color[gray]{#1}}%
+      \expandafter\def\csname LTw\endcsname{\color{white}}%
+      \expandafter\def\csname LTb\endcsname{\color{black}}%
+      \expandafter\def\csname LTa\endcsname{\color{black}}%
+      \expandafter\def\csname LT0\endcsname{\color{black}}%
+      \expandafter\def\csname LT1\endcsname{\color{black}}%
+      \expandafter\def\csname LT2\endcsname{\color{black}}%
+      \expandafter\def\csname LT3\endcsname{\color{black}}%
+      \expandafter\def\csname LT4\endcsname{\color{black}}%
+      \expandafter\def\csname LT5\endcsname{\color{black}}%
+      \expandafter\def\csname LT6\endcsname{\color{black}}%
+      \expandafter\def\csname LT7\endcsname{\color{black}}%
+      \expandafter\def\csname LT8\endcsname{\color{black}}%
+    \fi
+  \fi
+    \setlength{\unitlength}{0.0500bp}%
+    \ifx\gptboxheight\undefined%
+      \newlength{\gptboxheight}%
+      \newlength{\gptboxwidth}%
+      \newsavebox{\gptboxtext}%
+    \fi%
+    \setlength{\fboxrule}{0.5pt}%
+    \setlength{\fboxsep}{1pt}%
+\begin{picture}(8162.00,5442.00)%
+    \gplgaddtomacro\gplbacktext{%
+      \csname LTb\endcsname%%
+      \put(814,704){\makebox(0,0)[r]{\strut{}0.0}}%
+      \put(814,1269){\makebox(0,0)[r]{\strut{}1.0}}%
+      \put(814,1833){\makebox(0,0)[r]{\strut{}2.0}}%
+      \put(814,2398){\makebox(0,0)[r]{\strut{}3.0}}%
+      \put(814,2963){\makebox(0,0)[r]{\strut{}4.0}}%
+      \put(814,3527){\makebox(0,0)[r]{\strut{}5.0}}%
+      \put(814,4092){\makebox(0,0)[r]{\strut{}6.0}}%
+      \put(814,4656){\makebox(0,0)[r]{\strut{}7.0}}%
+      \put(814,5221){\makebox(0,0)[r]{\strut{}8.0}}%
+      \put(946,484){\makebox(0,0){\strut{}0.00}}%
+      \put(1628,484){\makebox(0,0){\strut{}0.10}}%
+      \put(2310,484){\makebox(0,0){\strut{}0.20}}%
+      \put(2992,484){\makebox(0,0){\strut{}0.30}}%
+      \put(3674,484){\makebox(0,0){\strut{}0.40}}%
+      \put(4356,484){\makebox(0,0){\strut{}0.50}}%
+      \put(5037,484){\makebox(0,0){\strut{}0.60}}%
+      \put(5719,484){\makebox(0,0){\strut{}0.70}}%
+      \put(6401,484){\makebox(0,0){\strut{}0.80}}%
+      \put(7083,484){\makebox(0,0){\strut{}0.90}}%
+      \put(7765,484){\makebox(0,0){\strut{}1.00}}%
+      \put(3401,4656){\makebox(0,0)[l]{\strut{}Capacity factor = 0.349}}%
+    }%
+    \gplgaddtomacro\gplfronttext{%
+      \csname LTb\endcsname%%
+      \put(198,2962){\rotatebox{-270}{\makebox(0,0){\strut{}Normalised mean absolute error, \%}}}%
+      \put(4355,154){\makebox(0,0){\strut{}Battery power rating/ energy capacity, p.u.}}%
+    }%
+    \gplbacktext
+    \put(0,0){\includegraphics{plot_wind_bess_nmae}}%
+    \gplfronttext
+  \end{picture}%
+\endgroup

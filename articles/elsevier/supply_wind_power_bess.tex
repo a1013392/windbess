@@ -220,8 +220,8 @@ Let $n_{y}$ be the number of time steps in the prediction horizon, and $n_{u}$ t
 \end{equation}
 where
 \begin{IEEEeqnarray*}{rCl}
-	\vv{\boldsymbol{y}}_{t+1} & = & \begin{bmatrix*}[c] \boldsymbol{y}(t\!+\!1) &\boldsymbol{y}(t\!+\!2) & \!\ldots\! & \boldsymbol{y}(t\!+\!n) \end{bmatrix*}^{T},\\
-	\vv{\boldsymbol{\Delta{u}}}_{t} & = & \begin{bmatrix*}[c] \boldsymbol{\Delta{u}}(t) &\boldsymbol{\Delta{u}}(t\!+\!1) & \!\ldots\! & \boldsymbol{\Delta{u}}(t\!+\!n\!-\!1) \end{bmatrix*}^{T},%\IEEEyesnumber\label{eqn:ssm_ydu}
+	\vv{\boldsymbol{y}}_{t+1} & = & \begin{bmatrix*}[c] \boldsymbol{y}(t\!+\!1)^{T} &\boldsymbol{y}(t\!+\!2)^{T} & \!\ldots\! & \boldsymbol{y}(t\!+\!n)^{T} \end{bmatrix*}^{T},\\
+	\vv{\boldsymbol{\Delta{u}}}_{t} & = & \begin{bmatrix*}[c] \boldsymbol{\Delta{u}}(t)^{T} &\boldsymbol{\Delta{u}}(t\!+\!1)^{T} & \!\!\!\!\!\ldots\!\!\!\!\! & \boldsymbol{\Delta{u}}(t\!+\!n\!-\!1)^{T} \end{bmatrix*}^{T},%\IEEEyesnumber\label{eqn:ssm_ydu}
 \end{IEEEeqnarray*}
 and $K\in\R^{mn\times{s}}$ and $L\in\R^{mn\times{qn}}$ are matrices defining the multi-period incremental state-space model.  By recursively applying \eqref{eqn:ssm_state} and \eqref{eqn:ssm_output} over the $n$-period horizon, it follows that
 \begin{IEEEeqnarray*}{rCl}
@@ -251,7 +251,7 @@ Control signals affecting process outputs are determined by optimising a perform
 \end{IEEEeqnarray*}
 where
 \begin{equation*}\label{eqn:cost_func_set_pt}
-	\vv{\boldsymbol{r}}_{t+1} = \begin{bmatrix*}[c] \boldsymbol{r}(t\!+\!1) & \boldsymbol{r}(t\!+\!2) & \ldots & \boldsymbol{r}(t\!+\!n)\end{bmatrix*}^{T},
+	\vv{\boldsymbol{r}}_{t+1} = \begin{bmatrix*}[c] \boldsymbol{r}(t\!+\!1)^{T} & \boldsymbol{r}(t\!+\!2)^{T} & \ldots & \boldsymbol{r}(t\!+\!n)^{T} \end{bmatrix*}^{T},
 \end{equation*}
 $\Omega\in\R^{mn\times{mn}}$ and $\Psi \in\R^{qn\times{qn}}$ are positive semidefinite diagonal weighting matrices, and $\lambda \geq 0$ is a scalar weighting coefficient.
 

@@ -1,8 +1,8 @@
-# Gnuplot script generates charts illustating the dependability of wind power
-# dispatch with battery energy storage.
+# Gnuplot script generates charts illustating the firming of wind power dispatch
+# with battery energy storage.
 
 reset
-#set term epslatex size 14.4cm, 9.6cm
+set term epslatex size 14.4cm, 9.6cm
 #set size 1.0, 1.0
 
 #------------------------------------------------------------------------------#
@@ -23,8 +23,8 @@ set style line 10 linecolor rgb 'black' linewidth 2 dashtype 1 pointtype 1
 set style line 11 linecolor rgb 'skyblue' linewidth 2 dashtype 1 pointtype 1
 
 #------------------------------------------------------------------------------#
-cf = 0.379		# Capacity factor of SNOWTWN1 wind farm
-bc = 49.50		# Energy capacity (MW) of battery coupled to SNOWTWN1 wind farm
+cf = 0.349		# Capacity factor of SNOWTWN1 wind farm (2016-17)
+bc = 99.0		# Energy capacity (MWh) of battery coupled to SNOWTWN1 wind farm
 
 #------------------------------------------------------------------------------#
 #------------------------------------------------------------------------------#
@@ -37,16 +37,17 @@ set output 'plot_wind_bess_nmae.tex'
 #set key inside left bottom Left reverse nobox
 unset key
 set xrange [0.00:1.00]
-set yrange [0.0:10.0]
+set yrange [0.0:8.0]
 set xtics 0.00, 0.10, 1.00 format '%.2f'
 set mxtics 2
-set ytics 0.0, 1.0, 10.0 format '%.1f'
+set ytics 0.0, 1.0, 8.0 format '%.1f'
 set mytics 2
 set xlabel 'Battery power rating/ energy capacity, p.u.'
 set ylabel 'Normalised mean absolute error, \%' 
-set arrow from cf,0 to cf,10 nohead ls 5
-set label at 0.40,9.0 sprintf("Capacity factor = %.2f", cf) left
-plot	'../data/out/windbess_rslt_snowtwn1.dat' using ($5/$4):10 notitle with lines ls 1 smooth bezier		
+set arrow from cf,0 to cf,8 nohead ls 5
+set label at 0.36,7.0 sprintf("Capacity factor = %.3f", cf) left
+plot	'../data/out/windbess_rslt_snowtwn1.dat' using ($5/$4):10 notitle with points ls 1, \
+		'../data/out/windbess_rslt_snowtwn1.dat' using ($5/$4):10 notitle with lines ls 1 smooth bezier		
 unset xlabel
 unset ylabel
 unset arrow
@@ -71,11 +72,12 @@ set mytics 2
 set y2tics border nomirror 0.0, 2.0, 20.0 format '%.1f'
 set my2tics 2
 set xlabel 'Battery power rating/ energy capacity, p.u.'
-set ylabel 'Proportion of dispatch interval in power deficit, \%'
-set arrow 1 from 0.05,37.5 to 0.10,37.5 backhead filled ls 1
-set arrow 2 from 0.90,30.0 to 0.95,30.0 head filled ls 2
-set y2label 'Normalised mean absolute error for power deficit, \%'
-plot	'../data/out/windbess_rslt_snowtwn1.dat' using ($5/$4):($15/$8*100) notitle with lines ls 1 axes x1y1 smooth bezier, \
+set ylabel '\shortstack{Proportion of dispatch intervals in which\\power dispatched is less than scheduled, \%}'
+set arrow 1 from 0.05,32.5 to 0.10,32.5 backhead filled ls 1
+set arrow 2 from 0.90,17.5 to 0.95,17.5 head filled ls 2
+set y2label '\shortstack{Normalised mean absolute error for dispatch intervals\\in which power dispatched is less than scheduled, \%}'
+plot	'../data/out/windbess_rslt_snowtwn1.dat' using ($5/$4):($15/$8*100) notitle with points ls 1 axes x1y1, \
+		'../data/out/windbess_rslt_snowtwn1.dat' using ($5/$4):($15/$8*100) notitle with lines ls 1 axes x1y1 smooth bezier, \
 		'../data/out/windbess_rslt_snowtwn1.dat' using ($5/$4):17 notitle with lines ls 2 axes x1y2 smooth bezier		
 unset xlabel
 unset ylabel

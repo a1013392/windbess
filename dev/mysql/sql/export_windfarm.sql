@@ -6,7 +6,9 @@
 \! echo "USE windfarm"
 USE windfarm
 
-SET @start_time = '2017-03-31 00:00:00', @end_time = '2017-12-31 23:55:00';
+#SET @start_time = '2017-04-01 00:00:00', @end_time = '2018-03-31 23:55:00';	# UTC
+#SET @start_time = '2017-03-31 14:00:00', @end_time = '2018-03-31 13:55:00';	# AEST
+SET @start_time = '2017-03-31 13:00:00', @end_time = '2018-03-31 12:55:00';		# AET
 SELECT @start_time, @end_time;
 
 /*****************************************************************************
@@ -34,6 +36,14 @@ WHERE f5.duid = wm.duid
 AND ADDTIME(f5.time_pred_utc, '00:05:00') = wm.time_meas_utc
 AND wm.time_meas_utc = dt.date_time_utc
 AND f5.time_pred_utc >= @start_time AND f5.time_pred_utc <= @end_time
+;
+
+\! echo "SELECT * FROM wind_sim INTO OUTFILE /data/uigf_meas.dat"
+SELECT *
+FROM wind_sim
+ORDER BY duid, time_pred_utc
+INTO OUTFILE '/data/uigf_meas.dat'
+COLUMNS TERMINATED BY '\t'
 ;
 
 /*****************************************************************************

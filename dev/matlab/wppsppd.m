@@ -30,10 +30,9 @@ function [ wpp, sppd ] = wppsppd( ...
         socmid = ( socmin + socmax ) / 2.0;
         % Fix power dispatched set point to predicted wind power at end of
         % prediction/control horizon if battery SOC equals or exceeds
-        % threshold.  Otherwise, fix power dispatched set point to a fraction 
-        % of the predicted wind power which depends on normalised mean
-        % absolute error.  Note that if soc = socmax = socmid = socmin = 0.0, 
-        % then sppd(n) is set to wpp(n)
+        % threshold.  Otherwise, fix power dispatched set point to some 
+        % fraction of the predicted wind power.  Note that if
+        % soc = socmax = socmid = socmin = 0, then sppd(n) is set to wpp(n)
         if ( soc > socmid - epsilon )
             sppd(n) = wpp(n);
         else

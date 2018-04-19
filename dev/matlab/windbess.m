@@ -39,7 +39,10 @@ battcap = 0.50*base;        % Battery storage capacity (MWh)
 battrt = 0.50*base;         % Battery rated power (MW)
 deltacntl = 0.05*battcap;   % Maximum "delta control" command -- amount 
                             % that wind power set point is limited below 
-                            % predicted available capacity 
+                            % predicted available capacity
+fprintf( 'Wind farm capacity: %.2f MW\n', windcap );
+fprintf( 'Battery rated power: %.2f MW\n', battrt );
+fprintf( 'Battery energy capacity: %.2f MWh\n', battcap );
 
 % Define matrices describing incremental state-space model
 A = [ 1 delta*eta -delta/eta 0; 0 1 0 0; 0 0 1 0; 0 0 0 1 ];
@@ -48,7 +51,7 @@ C = [ 1 0 0 0; 0 -1 1 1 ];
 [ K, L ] = mpckl( m, s, q, d, n, A, B, C );
 
 % Read UIGF forecasts and SCADA (measured) data from input file 
-uigffile = '/Users/starca/projects/windbess/dev/data/in/uigf_meas_1711.dat';
+uigffile = '/Users/starca/projects/windbess/dev/data/in/uigf_meas.dat';
 [ N, duid, uigfutc, uigf, measutc, measaet, pwmeas, sdcmeas ] = ...
     uigfread( uigffile );
 % Calculate the number of time steps in the simulation horizon
@@ -128,6 +131,8 @@ H = transpose(L)*Omega*L + lambda*Psi;
 % Set type for each variable in the argument argument vector of MIQP
 ctype = miqptype( q, d, n );
 for k = 1:N     % For each time step in simulation
+    
+    if ( mod( k, 10000) == 0 ) fprintf( 'Iteration #: %d\n', k ); end 
 
     % Define constraints on optimisation of the performance index
     [ G, h ] = miqpcstr( m, q, d, n, delta, eta, z0, pw, zlb, zub );

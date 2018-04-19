@@ -13,7 +13,7 @@ USE windfarm
 -- Let @delta be the conversion factor from kW to kWh for 5-minute time intervals
 -- SET @delta = 1.0/12.0;
 
-SET @start_time = '2017-03-31 00:00:00', @end_time = '2018-01-01 00:00:00';
+SET @start_time = '2017-03-31 00:00:00', @end_time = '2018-04-02 00:00:00';
 SELECT @start_time, @end_time;
 
 /*****************************************************************************/
@@ -132,7 +132,7 @@ FROM uigf_feed
 GROUP BY duid, time_pred_utc
 ;
 
-/*****************************************************************************/
+/*****************************************************************************
 \! echo "INSERT INTO dispatch SELECT * FROM ndd_feed, date_time"
 INSERT INTO dispatch
 SELECT duid, date_time_utc, dispatch_int, wind_init_mw*1000, wind_clear_mw*1000, wind_avail_mw*1000, dispatch_cap
@@ -140,6 +140,6 @@ FROM ndd_feed, date_time
 WHERE time_settle_aest = date_time_aest
 AND interven = 0
 ;
-
+ */
 
 
