@@ -31,18 +31,22 @@ delta = 1/12;   % Conversion factor from MW to MWh for given dispatch interval
 eta = sqrt(0.80);   % One-way battery charge/discharge efficiency (measured
                     % efficiency of the Telsa/Neoen Hornsdale Power Reserve
                     % over the full month of December 2017)
-base = 99.0;    % Base (MW and MWh) for per-unit (dimensionless) quantities
+% Base (MW and MWh) for per-unit (dimensionless) quantities
+if ( ~exist('pubase', 'var') ) pubase = 100.0; end   
 
 % Define power and energy in terms of per unit base quantity
-windcap = 1.00*base;        % Wind farm registered capacity (MW)
-battcap = 0.50*base;        % Battery storage capacity (MWh)
-battrt = 0.50*base;         % Battery rated power (MW)
-deltacntl = 0.05*battcap;   % Maximum "delta control" command -- amount 
-                            % that wind power set point is limited below 
-                            % predicted available capacity
+% Wind farm registered capacity (MW)
+if ( ~exist('windcap', 'var') ) windcap = 1.00*pubase; end
+% Battery storage capacity (MWh)  
+if ( ~exist('battcap', 'var') ) battcap = 0.50*pubase; end
+% Battery rated power (MW)
+battrt = 0.80*battcap;
+% Maximum "delta control" command -- amount that wind power set point is limited
+% below predicted available capacity
+deltacntl = 0.05*battcap; 
 fprintf( 'Wind farm capacity: %.2f MW\n', windcap );
-fprintf( 'Battery rated power: %.2f MW\n', battrt );
 fprintf( 'Battery energy capacity: %.2f MWh\n', battcap );
+fprintf( 'Battery rated power: %.2f MW\n', battrt );
 
 % Define matrices describing incremental state-space model
 A = [ 1 delta*eta -delta/eta 0; 0 1 0 0; 0 0 1 0; 0 0 0 1 ];
@@ -51,31 +55,38 @@ C = [ 1 0 0 0; 0 -1 1 1 ];
 [ K, L ] = mpckl( m, s, q, d, n, A, B, C );
 
 % Read UIGF forecasts and SCADA (measured) data from input file 
-uigffile = '/Users/starca/projects/windbess/dev/data/in/uigf_meas.dat';
+if ( ~exist('uigffile', 'var') ) 
+	uigffile = '/Users/starca/projects/windbess/dev/data/in/uigf_meas_1711.dat';
+end
 [ N, duid, uigfutc, uigf, measutc, measaet, pwmeas, sdcmeas ] = ...
     uigfread( uigffile );
-% Calculate the number of time steps in the simulation horizon
-fprintf( 'UIGF file is: %s\n', uigffile );
 fprintf( 'Number of time steps in simulation horizon, N = %d\n', N );
 
 % Open simulation output file and write header
-simfile = '/Users/starca/projects/windbess/dev/data/out/windbess_sim_snowtwn1.dat';
+if ( ~exist('simfile', 'var') ) 
+	simfile = '/Users/starca/projects/windbess/dev/data/out/windbess_sim_snowtwn1_1711.dat';
+end
 simfid = fopen( simfile, 'w' );
 fprintf( simfid, ['#DUID\tDptchUTC\tDptchAET\tUIGFUTC\tPwrDptch\t', ...
     'SetPtPwrDsptch\tBESSChrg\tPwrChrg\tPwrDchrg\tBESSSOC\tPwrWind\t', ...
     'UIGF5min\tPwrDptchSurplus\tPwrDptchDeficit\tSDCMeas\n'] );
 
 % Open simulation results file for writing or appending, and in the former
-% case write header
-rsltfile = '/Users/starca/projects/windbess/dev/data/out/windbess_rslt_snowtwn1.dat';
-if ( exist( rsltfile, 'file' ) )
+% case write header record if header flag is TRUE
+if ( ~exist('rslthdr', 'var') ) rslthdr = true; end 
+if ( ~exist('rsltfile', 'var') ) 
+	rsltfile = '/Users/starca/projects/windbess/dev/data/out/windbess_rslt_snowtwn1_1711.dat';
+end
+if ( exist(rsltfile, 'file') )
     rsltfid = fopen( rsltfile, 'a' );
 else
     rsltfid = fopen( rsltfile, 'w' );
-    fprintf( rsltfid, ['#DUID\tSimHrzn\tCtrlHrzn\tWindCap\tBattCap\tBattRt\t', ...
-        'CtrlWgt\tDptchInt\tMeanAbsErr\tNormMeanAbsErr\tMeanSqrErr\t', ...
-        'SurplusDptchInt\tMeanDptchSurplus\tNormMeanDptchSurplus\t', ...
-        'DeficitDptchInt\tMeanDptchDeficit\tNormMeanDptchDeficit\n'] );
+	if ( rslthdr )
+    	fprintf( rsltfid, ['#DUID\tSimHrzn\tCtrlHrzn\tWindCap\tBattCap\tBattRt\t', ...
+        	'CtrlWgt\tDptchInt\tMeanAbsErr\tNormMeanAbsErr\tMeanSqrErr\t', ...
+        	'SurplusDptchInt\tMeanDptchSurplus\tNormMeanDptchSurplus\t', ...
+        	'DeficitDptchInt\tMeanDptchDeficit\tNormMeanDptchDeficit\n'] );
+	end
 end
 
 % Define upper and lower bounds on state variables: battery state of charge 
