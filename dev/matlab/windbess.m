@@ -21,7 +21,7 @@ s = 4;          % Length of single-period state vector
 q = 3;          % Length of single-period control increment vector
 d = 1;          % Number of binary (dummy) variables for each time interval
                 % in the control horizon, w
-n = 6;          % Number of time intervals in prediciton and control horizons
+n = 24;          % Number of time intervals in prediciton and control horizons
  
 epsilon = 1e-12;    % Round-off tolerance to account for errors arising
                     % from floating point operations
@@ -43,7 +43,9 @@ if ( ~exist('battcap', 'var') ) battcap = 0.50*pubase; end
 battrt = 0.80*battcap;
 % Maximum "delta control" command -- amount that wind power set point is limited
 % below predicted available capacity
-deltacntl = 0.05*battcap; 
+deltacntl = 0.00*battcap;
+
+% Write simulation parameters/ arguments to terminal
 fprintf( 'Wind farm capacity: %.2f MW\n', windcap );
 fprintf( 'Battery energy capacity: %.2f MWh\n', battcap );
 fprintf( 'Battery rated power: %.2f MW\n', battrt );
@@ -56,7 +58,7 @@ C = [ 1 0 0 0; 0 -1 1 1 ];
 
 % Read UIGF forecasts and SCADA (measured) data from input file 
 if ( ~exist('uigffile', 'var') ) 
-	uigffile = '/Users/starca/projects/windbess/dev/data/in/uigf_meas_1711.dat';
+	uigffile = '/Users/starca/uofa/projects/windbess/dev/data/in/uigf_meas_1711.dat';
 end
 [ N, duid, uigfutc, uigf, measutc, measaet, pwmeas, sdcmeas ] = ...
     uigfread( uigffile );
@@ -64,7 +66,7 @@ fprintf( 'Number of time steps in simulation horizon, N = %d\n', N );
 
 % Open simulation output file and write header
 if ( ~exist('simfile', 'var') ) 
-	simfile = '/Users/starca/projects/windbess/dev/data/out/windbess_sim_snowtwn1_1711.dat';
+	simfile = '/Users/starca/uofa/projects/windbess/dev/data/out/windbess_sim_snowtwn1.dat';
 end
 simfid = fopen( simfile, 'w' );
 fprintf( simfid, ['#DUID\tDptchUTC\tDptchAET\tUIGFUTC\tPwrDptch\t', ...
@@ -75,7 +77,7 @@ fprintf( simfid, ['#DUID\tDptchUTC\tDptchAET\tUIGFUTC\tPwrDptch\t', ...
 % case write header record if header flag is TRUE
 if ( ~exist('rslthdr', 'var') ) rslthdr = true; end 
 if ( ~exist('rsltfile', 'var') ) 
-	rsltfile = '/Users/starca/projects/windbess/dev/data/out/windbess_rslt_snowtwn1_1711.dat';
+	rsltfile = '/Users/starca/uofa/projects/windbess/dev/data/out/windbess_rslt_snowtwn1_1711.dat';
 end
 if ( exist(rsltfile, 'file') )
     rsltfid = fopen( rsltfile, 'a' );
@@ -225,3 +227,5 @@ fclose( rsltfid );
 
 timeelap = toc( timesta );  % Measure elapsed time for execution of program
 fprintf( 'Elapsed time: %.1f seconds\n', timeelap );
+%Clear workspace for next simulation run
+clear;

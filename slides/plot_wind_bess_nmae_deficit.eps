@@ -1,7 +1,7 @@
 %!PS-Adobe-2.0 EPSF-2.0
 %%Title: plot_wind_bess_nmae_deficit.tex
-%%Creator: gnuplot 5.2 patchlevel 2
-%%CreationDate: Thu Apr 19 10:29:47 2018
+%%Creator: gnuplot 5.2 patchlevel 3
+%%CreationDate: Tue Jun 12 15:37:49 2018
 %%DocumentFonts: 
 %%BoundingBox: 50 50 458 322
 %%EndComments
@@ -48,7 +48,7 @@ gnudict begin
   } if
 } def
 %
-% Gnuplot Prolog Version 5.1 (Oct 2015)
+% Gnuplot Prolog Version 5.2 (Dec 2017)
 %
 %/SuppressPDFMark true def
 %
@@ -305,7 +305,7 @@ gnudict begin
   ColR ColG ColB setrgbcolor} def
 /BoxColFill {gsave Rec PolyFill} def
 /PolyFill {gsave Density fill grestore grestore} def
-/h {rlineto rlineto rlineto gsave closepath fill grestore} bind def
+/h {rlineto rlineto rlineto closepath gsave fill grestore stroke} bind def
 %
 % PostScript Level 1 Pattern Fill routine for rectangles
 % Usage: x y w h s a XX PatternFill
@@ -438,10 +438,10 @@ systemdict /pdfmark known not {
 SDict begin [
   /Title (plot_wind_bess_nmae_deficit.tex)
   /Subject (gnuplot plot)
-  /Creator (gnuplot 5.2 patchlevel 2)
+  /Creator (gnuplot 5.2 patchlevel 3)
 %  /Producer (gnuplot)
 %  /Keywords ()
-  /CreationDate (Thu Apr 19 10:29:47 2018)
+  /CreationDate (Tue Jun 12 15:37:49 2018)
   /DOCINFO pdfmark
 end
 } ifelse
@@ -710,22 +710,29 @@ Z stroke
 LTb
 0.00 0.00 0.00 C gsave 1444 3151 N 0 22 V -82 -22 V 82 -22 V 0 22 V 1 PolyFill
 1444 3151 M
+stroke
+1444 3151 N
 0 22 V
 -82 -22 V
 82 -22 V
 0 22 V
+Z stroke
+1444 3151 M
 202 0 V
 stroke
 LTb
 LCb setrgbcolor
 LT5
-0.13 0.55 0.13 C gsave 6387 2021 N 0 -21 V 82 21 V -82 21 V 0 -21 V 1 PolyFill
-6387 2021 M
+0.13 0.55 0.13 C gsave 6387 1833 N 0 -21 V 82 21 V -82 21 V 0 -21 V 1 PolyFill
+6387 1833 M
+stroke
+6387 1833 N
 0 -21 V
 82 21 V
 -82 21 V
 0 -21 V
--201 0 R
+Z stroke
+6186 1833 M
 201 0 V
 stroke
 1.000 UL
@@ -737,234 +744,158 @@ LTb
 1.000 UP
 2.000 UL
 LTb
-0.00 0.00 0.00 C 1078 4817 Pls
-1646 3024 Pls
-2213 2119 Pls
-2781 1625 Pls
-3348 1320 Pls
-3916 1144 Pls
-4483 1025 Pls
-5051 957 Pls
-5618 913 Pls
-6185 882 Pls
-6753 850 Pls
+0.00 0.00 0.00 C 1078 4817 M
+284 -794 V
+284 -572 V
+283 -373 V
+284 -253 V
+284 -165 V
+284 -112 V
+283 -70 V
+284 -49 V
+284 -33 V
+284 -30 V
+283 -25 V
+284 -14 V
+284 -15 V
+284 -10 V
+283 -8 V
+284 -6 V
+284 -5 V
+283 -5 V
+284 -4 V
+284 -4 V
+1078 4817 Pls
+1362 4023 Pls
+1646 3451 Pls
+1929 3078 Pls
+2213 2825 Pls
+2497 2660 Pls
+2781 2548 Pls
+3064 2478 Pls
+3348 2429 Pls
+3632 2396 Pls
+3916 2366 Pls
+4199 2341 Pls
+4483 2327 Pls
+4767 2312 Pls
+5051 2302 Pls
+5334 2294 Pls
+5618 2288 Pls
+5902 2283 Pls
+6185 2278 Pls
+6469 2274 Pls
+6753 2270 Pls
 LTw
 % End plot #1
 % Begin plot #2
 2.000 UL
 LTb
 LCb setrgbcolor
-0.00 0.00 0.00 C 1078 4817 M
-57 -177 V
-58 -170 V
-57 -161 V
-57 -155 V
-58 -148 V
-57 -141 V
-57 -135 V
-58 -129 V
-57 -123 V
-57 -118 V
-58 -113 V
-57 -107 V
-57 -103 V
-58 -98 V
-57 -94 V
-57 -90 V
-57 -86 V
-58 -82 V
-57 -78 V
-57 -75 V
-58 -71 V
-57 -69 V
-57 -65 V
-58 -62 V
-57 -60 V
-57 -57 V
-58 -54 V
-57 -53 V
-57 -49 V
-58 -48 V
-57 -45 V
-57 -44 V
-58 -42 V
-57 -39 V
-57 -38 V
-58 -37 V
-57 -34 V
-57 -34 V
-58 -31 V
-57 -31 V
-57 -29 V
-58 -27 V
-57 -27 V
-57 -25 V
-58 -24 V
-57 -24 V
-57 -22 V
+LT5
+0.13 0.55 0.13 C 1078 2075 M
+57 -23 V
 58 -21 V
-57 -20 V
-57 -20 V
-57 -18 V
-58 -18 V
-57 -17 V
-57 -16 V
-58 -15 V
-57 -15 V
+57 -21 V
+57 -19 V
+58 -16 V
 57 -14 V
-58 -14 V
-57 -13 V
-57 -12 V
-58 -12 V
 57 -11 V
-57 -11 V
+58 -11 V
+57 -9 V
+57 -9 V
 58 -10 V
 57 -10 V
+57 -11 V
+58 -10 V
 57 -9 V
+57 -9 V
+57 -8 V
 58 -9 V
 57 -8 V
-57 -9 V
-58 -7 V
 57 -8 V
+58 -8 V
+57 -8 V
+57 -8 V
+58 -8 V
 57 -7 V
-58 -7 V
-57 -6 V
 57 -7 V
 58 -6 V
-57 -5 V
 57 -6 V
+57 -5 V
+58 -6 V
+57 -5 V
+57 -4 V
 58 -5 V
-57 -5 V
-57 -5 V
-58 -5 V
-57 -4 V
-57 -5 V
-57 -4 V
-58 -4 V
-57 -4 V
-57 -4 V
-58 -3 V
-57 -4 V
-57 -3 V
-58 -4 V
 57 -3 V
 57 -4 V
 58 -3 V
+57 -2 V
 57 -3 V
-57 -3 V
-58 -4 V
-57 -3 V
+58 -2 V
+57 -2 V
+57 -2 V
+58 -2 V
+57 -2 V
+57 -1 V
+58 -1 V
+57 -1 V
+57 -1 V
+58 0 V
+57 0 V
+57 0 V
+57 0 V
+58 0 V
+57 0 V
+57 0 V
+58 0 V
+57 -1 V
+57 0 V
+58 -1 V
+57 0 V
+57 -1 V
+58 0 V
+57 0 V
+57 1 V
+58 0 V
+57 0 V
+57 0 V
+58 0 V
+57 -1 V
+57 0 V
+58 0 V
+57 0 V
+57 0 V
+58 0 V
+57 -1 V
+57 0 V
+58 0 V
+57 -1 V
+57 0 V
+58 0 V
+57 -1 V
+57 0 V
+58 0 V
+57 0 V
+57 0 V
+57 0 V
+58 0 V
+57 0 V
+57 0 V
+58 0 V
+57 0 V
+57 0 V
+58 -1 V
+57 0 V
+57 0 V
+58 0 V
+57 0 V
+57 0 V
+58 0 V
+57 1 V
 stroke
 LTw
 % End plot #2
-% Begin plot #3
-2.000 UL
-LTb
-LCb setrgbcolor
-LT5
-0.13 0.55 0.13 C 1078 2075 M
-57 -4 V
-58 -2 V
-57 -2 V
-57 -2 V
-58 -1 V
-57 -1 V
-57 -1 V
-58 0 V
-57 0 V
-57 1 V
-58 1 V
-57 1 V
-57 1 V
-58 2 V
-57 2 V
-57 2 V
-57 2 V
-58 3 V
-57 3 V
-57 3 V
-58 3 V
-57 3 V
-57 3 V
-58 4 V
-57 4 V
-57 4 V
-58 4 V
-57 4 V
-57 4 V
-58 4 V
-57 4 V
-57 5 V
-58 4 V
-57 5 V
-57 4 V
-58 5 V
-57 4 V
-57 5 V
-58 4 V
-57 5 V
-57 4 V
-58 5 V
-57 4 V
-57 4 V
-58 5 V
-57 4 V
-57 4 V
-58 4 V
-57 3 V
-57 4 V
-57 3 V
-58 4 V
-57 3 V
-57 3 V
-58 2 V
-57 3 V
-57 2 V
-58 2 V
-57 2 V
-57 1 V
-58 2 V
-57 1 V
-57 1 V
-58 0 V
-57 0 V
-57 0 V
-58 0 V
-57 -1 V
-57 0 V
-58 -2 V
-57 -1 V
-57 -2 V
-58 -1 V
-57 -3 V
-57 -2 V
-58 -3 V
-57 -3 V
-57 -3 V
-58 -3 V
-57 -3 V
-57 -4 V
-58 -3 V
-57 -4 V
-57 -4 V
-57 -4 V
-58 -4 V
-57 -4 V
-57 -3 V
-58 -4 V
-57 -4 V
-57 -3 V
-58 -3 V
-57 -3 V
-57 -3 V
-58 -2 V
-57 -2 V
-57 -1 V
-58 -1 V
-57 0 V
-stroke
-LTw
-% End plot #3
 2.000 UL
 LTb
 LCb setrgbcolor

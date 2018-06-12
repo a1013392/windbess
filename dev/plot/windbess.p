@@ -8,19 +8,9 @@ set term epslatex size 14.4cm, 9.6cm
 #------------------------------------------------------------------------------#
 roff_tol = 1e-12
 set style line 1 linecolor rgb 'black' linewidth 2 dashtype 1 pointtype 1
-set style line 2 linecolor rgb 'forest-green' linewidth 2 dashtype 6 pointtype 6
-set style line 3 linecolor rgb 'medium-blue' linewidth 2 dashtype 4 pointtype 4
-set style line 4 linecolor rgb 'dark-violet' linewidth 2 dashtype 2 pointtype 2
-
-set style line 5 linecolor rgb 'red' linewidth 1 dashtype 6 pointtype 6
-set style line 6 linecolor rgb 'dark-orange' linewidth 1 dashtype 4 pointtype 4
-set style line 7 linecolor rgb 'gold' linewidth 1 dashtype 2 pointtype 2
-
-set style line 8 linecolor rgb 'dark-gray' linewidth 1 dashtype 6 pointtype 6
-set style line 9 linecolor rgb 'red' linewidth 2 dashtype 1 pointtype 1
-
-set style line 10 linecolor rgb 'black' linewidth 2 dashtype 1 pointtype 1
-set style line 11 linecolor rgb 'skyblue' linewidth 2 dashtype 1 pointtype 1
+set style line 2 linecolor rgb 'forest-green' linewidth 2 dashtype 6 pointtype 2
+set style line 3 linecolor rgb 'medium-blue' linewidth 2 dashtype 4 pointtype 3
+set style line 4 linecolor rgb 'red' linewidth 1 dashtype 1 pointtype 1
 
 #------------------------------------------------------------------------------#
 cf = 0.349		# Capacity factor of SNOWTWN1 wind farm (2016-17)
@@ -30,12 +20,14 @@ bc = 99.0		# Energy capacity (MWh) of battery coupled to SNOWTWN1 wind farm
 #------------------------------------------------------------------------------#
 # Plots the normalised mean absolute error -- absolute difference between power
 # dispatch to the grid and power scheduled during pre-dispatch, normalised by 
-# the nameplate capacity of the wind farm.  NMAE is plotted for all dispatch 
-# intervals in which power is scheduled 
+# the nameplate capacity of the wind farm -- with and without curtailment of 
+# scheduled power.  NMAE is plotted for all dispatch intervals in which power is 
+# scheduled 
 #
 set output 'plot_wind_bess_nmae.tex'
-#set key inside left bottom Left reverse nobox
-unset key
+set key inside right top Left reverse nobox
+set key width -10
+#unset key
 set xrange [0.00:1.00]
 set yrange [0.0:8.0]
 set xtics 0.00, 0.10, 1.00 format '%.2f'
@@ -44,10 +36,12 @@ set ytics 0.0, 1.0, 8.0 format '%.1f'
 set mytics 2
 set xlabel 'Battery power rating/ energy capacity, p.u.'
 set ylabel 'Normalised mean absolute error, \%' 
-set arrow from cf,0 to cf,8 nohead ls 5
-set label at 0.36,7.0 sprintf("Capacity factor = %.3f", cf) left
-plot	'../data/out/windbess_rslt_snowtwn1.dat' using ($5/$4):10 notitle with points ls 1, \
-		'../data/out/windbess_rslt_snowtwn1.dat' using ($5/$4):10 notitle with lines ls 1 smooth bezier		
+set arrow from cf,0.0 to cf,8.0 nohead ls 4
+#set label at 0.34,0.25 sprintf("Capacity factor = %.3f", cf) right
+set label at 0.36,4.0 '\small Capacity factor = 0.349' left
+plot	'../data/out/windbess_rslt_snowtwn1.dat' using ($5/$4):10 title '\small No curtailment' with linespoints ls 1, \
+		'../data/out/windbess_rslt_snowtwn1_delta05.dat' using ($5/$4):10 title '\small Maximum curtailment 5\%' with linespoints ls 2, \
+		'../data/out/windbess_rslt_snowtwn1_delta10.dat' using ($5/$4):10 title '\small Maximum curtailment 10\%' with linespoints ls 3	
 unset xlabel
 unset ylabel
 unset arrow
@@ -74,11 +68,10 @@ set my2tics 2
 set xlabel 'Battery power rating/ energy capacity, p.u.'
 set ylabel '\shortstack{Proportion of dispatch intervals in which\\power dispatched is less than scheduled, \%}'
 set arrow 1 from 0.05,32.5 to 0.10,32.5 backhead filled ls 1
-set arrow 2 from 0.90,17.5 to 0.95,17.5 head filled ls 2
+set arrow 2 from 0.90,15.0 to 0.95,15.0 head filled ls 2
 set y2label '\shortstack{Normalised mean absolute error for dispatch intervals\\in which power dispatched is less than scheduled, \%}'
-plot	'../data/out/windbess_rslt_snowtwn1.dat' using ($5/$4):($15/$8*100) notitle with points ls 1 axes x1y1, \
-		'../data/out/windbess_rslt_snowtwn1.dat' using ($5/$4):($15/$8*100) notitle with lines ls 1 axes x1y1 smooth bezier, \
-		'../data/out/windbess_rslt_snowtwn1.dat' using ($5/$4):17 notitle with lines ls 2 axes x1y2 smooth bezier		
+plot	'../data/out/windbess_rslt_snowtwn1.dat' using ($5/$4):($15/$8*100) notitle with linespoints ls 1 axes x1y1, \
+		'../data/out/windbess_rslt_snowtwn1.dat' using ($5/$4):17 notitle with lines ls 2 axes x1y2 smooth csplines		
 unset xlabel
 unset ylabel
 unset y2label
@@ -87,6 +80,33 @@ unset mytics
 unset y2tics
 unset my2tics
 unset arrow
+
+pause -1 'Hit any key to continue'
+
+#------------------------------------------------------------------------------#
+# Plots the normalised mean absolute error for varying (MPC) control horizons 
+#
+set output 'plot_wind_bess_nmae_hrzn.tex'
+set key inside right top Left reverse nobox
+set key width -10
+#unset key
+set xrange [0.00:1.00]
+set yrange [0.0:10.0]
+set xtics 0.00, 0.10, 1.00 format '%.2f'
+set mxtics 2
+set ytics 0.0, 1.0, 10.0 format '%.1f'
+set mytics 2
+set xlabel 'Battery power rating/ energy capacity, p.u.'
+set ylabel 'Normalised mean absolute error, \%' 
+set arrow from cf,0.0 to cf,10.0 nohead ls 4
+#set label at 0.34,0.25 sprintf("Capacity factor = %.3f", cf) right
+set label at 0.36,5.0 '\small Capacity factor = 0.349' left
+plot	'../data/out/windbess_rslt_snowtwn1.dat' using ($5/$4):10 title '\small 30-minute control horizon' with linespoints ls 1, \
+		'../data/out/windbess_rslt_snowtwn1_hrzn60.dat' using ($5/$4):10 title '\small 60-minute control horizon' with linespoints ls 3	
+unset xlabel
+unset ylabel
+unset arrow
+unset label
 
 pause -1 'Hit any key to continue'
 
