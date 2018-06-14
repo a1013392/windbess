@@ -34,7 +34,7 @@ set xtics 0.00, 0.10, 1.00 format '%.2f'
 set mxtics 2
 set ytics 0.0, 1.0, 8.0 format '%.1f'
 set mytics 2
-set xlabel 'Battery power rating/ energy capacity, p.u.'
+set xlabel 'Battery energy capacity, p.u.'
 set ylabel 'Normalised mean absolute error, \%' 
 set arrow from cf,0.0 to cf,8.0 nohead ls 4
 #set label at 0.34,0.25 sprintf("Capacity factor = %.3f", cf) right
@@ -65,7 +65,7 @@ set ytics border nomirror 0.0, 5.0, 60.0 format '%.1f'
 set mytics 2
 set y2tics border nomirror 0.0, 2.0, 20.0 format '%.1f'
 set my2tics 2
-set xlabel 'Battery power rating/ energy capacity, p.u.'
+set xlabel 'Battery energy capacity, p.u.'
 set ylabel '\shortstack{Proportion of dispatch intervals in which\\power dispatched is less than scheduled, \%}'
 set arrow 1 from 0.05,32.5 to 0.10,32.5 backhead filled ls 1
 set arrow 2 from 0.90,15.0 to 0.95,15.0 head filled ls 2
@@ -96,7 +96,7 @@ set xtics 0.00, 0.10, 1.00 format '%.2f'
 set mxtics 2
 set ytics 0.0, 1.0, 10.0 format '%.1f'
 set mytics 2
-set xlabel 'Battery power rating/ energy capacity, p.u.'
+set xlabel 'Battery energy capacity, p.u.'
 set ylabel 'Normalised mean absolute error, \%' 
 set arrow from cf,0.0 to cf,10.0 nohead ls 4
 #set label at 0.34,0.25 sprintf("Capacity factor = %.3f", cf) right
@@ -131,7 +131,7 @@ unset xlabel
 set yrange [0.0:1.0]
 set ytics 0.0, 0.1, 1.0 format '%.2f'
 set mytics 2
-set ylabel 'Battery state of charge, p.u.'
+set ylabel 'Battery state of charge, \%'
 plot	'../data/out/windbess_sim_snowtwn1.dat' using 2:($13/bc) notitle with lines ls 1
 unset xlabel
 unset ylabel

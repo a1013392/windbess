@@ -21,7 +21,7 @@ s = 4;          % Length of single-period state vector
 q = 3;          % Length of single-period control increment vector
 d = 1;          % Number of binary (dummy) variables for each time interval
                 % in the control horizon, w
-n = 24;          % Number of time intervals in prediciton and control horizons
+n = 18;          % Number of time intervals in prediciton and control horizons
  
 epsilon = 1e-12;    % Round-off tolerance to account for errors arising
                     % from floating point operations
@@ -31,9 +31,9 @@ delta = 1/12;   % Conversion factor from MW to MWh for given dispatch interval
 eta = sqrt(0.80);   % One-way battery charge/discharge efficiency (measured
                     % efficiency of the Telsa/Neoen Hornsdale Power Reserve
                     % over the full month of December 2017)
-% Base (MW and MWh) for per-unit (dimensionless) quantities
-if ( ~exist('pubase', 'var') ) pubase = 100.0; end   
 
+% Base (MW and MWh) for per-unit (dimensionless) quantities
+if ( ~exist('pubase', 'var') ) pubase = 100.0; end
 % Define power and energy in terms of per unit base quantity
 % Wind farm registered capacity (MW)
 if ( ~exist('windcap', 'var') ) windcap = 1.00*pubase; end
@@ -77,7 +77,7 @@ fprintf( simfid, ['#DUID\tDptchUTC\tDptchAET\tUIGFUTC\tPwrDptch\t', ...
 % case write header record if header flag is TRUE
 if ( ~exist('rslthdr', 'var') ) rslthdr = true; end 
 if ( ~exist('rsltfile', 'var') ) 
-	rsltfile = '/Users/starca/uofa/projects/windbess/dev/data/out/windbess_rslt_snowtwn1_1711.dat';
+	rsltfile = '/Users/starca/uofa/projects/windbess/dev/data/out/windbess_rslt_snowtwn1_hrzn120.dat';
 end
 if ( exist(rsltfile, 'file') )
     rsltfid = fopen( rsltfile, 'a' );
@@ -143,6 +143,10 @@ sumdfct = 0.0;      % Sum of deficit power dispatched (MW)
 H = transpose(L)*Omega*L + lambda*Psi;
 % Set type for each variable in the argument argument vector of MIQP
 ctype = miqptype( q, d, n );
+% Set multi-period optimisation indicator
+if ( n > 1 ) multiprd = true; else multiprd = false; end
+% Count of optimisation attempts where optimal solution not found
+noptmcnt = 0;
 for k = 1:N     % For each time step in simulation
     
     if ( mod( k, 10000) == 0 ) fprintf( 'Iteration #: %d\n', k ); end 
@@ -151,34 +155,56 @@ for k = 1:N     % For each time step in simulation
     [ G, h ] = miqpcstr( m, q, d, n, delta, eta, z0, pw, zlb, zub );
     % Define linear term of the performance index (obj func of MIQP)
     f = transpose(K*z0 - sp)*Omega*L;
+    
     % Optimise performance index using quadratic programming
     [v, fval, exitflag, output] = cplexmiqp( ...
         H, f, G, h, [], [], [], [], [], [], [], ctype );
+    % Check for optimization errors/ warnings in multi-period setting  
+    if ( exitflag < 1 && n > 1 )
+        % Optimal solution not found for n-period control horizon, so
+        % attempt optimisation for single-period horizon
+        multiprd = false;           % Single-period optimisation
+        noptmcnt = noptmcnt + 1;    % Optimal solution not found count
+        [ K1, L1 ] = mpckl( m, s, q, d, 1, A, B, C );
+        [ lambda, Omega1, Psi1 ] = mpcwgt( m, q, d, 1, lambda, omega, psi );
+        H1 = transpose(L1)*Omega1*L1 + lambda*Psi1;
+        ctype1 = miqptype( q, d, 1 );
+        [ G, h ] = miqpcstr( m, q, d, 1, delta, eta, z0, pw(1), zlb, zub );
+        f = transpose(K1*z0 - sp(1:m)) * Omega1 * L1;
+        [v, fval, exitflag, output] = cplexmiqp( ...
+            H1, f, G, h, [], [], [], [], [], [], [], ctype1 );
+    end
     % Check for optimization errors/ warnings
     if ( exitflag < 1 )
         fprintf( 'Error: Solver terminated with exitflag = %d ', exitflag );
         fprintf( 'at time step %d of simulation.\n', k);
         return; % Exit script
     end
+    
     % Evaluate process outputs and control signals
-    [ du, u, y, w ] = evalout( q, d, n, K, L, ulast, z0, v );
-
+    if ( multiprd )
+        [ du, u, y, w ] = evalout( q, d, n, K, L, ulast, z0, v );
+    else
+        [ du, u, y, w ] = evalout( q, d, 1, K1, L1, ulast, z0, v );
+        if ( n > 1 ) multiprd = true; end   % Optimisation for next iteration
+    end
+            
     % Accumulate statistics when set point for power dispatched to the grid
     % during the next dispatch interval exceeds zero
-    if ( sp(m) > epsilon )
+    if ( sp(2) > epsilon )
         dpcnt = dpcnt + 1;
-        sumabserr = sumabserr + abs( y(m) - sp(m) );
-        sumsqrerr = sumsqrerr + (y(m) - sp(m))^2;
+        sumabserr = sumabserr + abs( y(2) - sp(2) );
+        sumsqrerr = sumsqrerr + (y(2) - sp(2))^2;
     end
     % Accumulate statistics when power dispatched to the grid exceeds set point
-    if ( y(m) > sp(m) + epsilon )
+    if ( y(2) > sp(2) + epsilon )
         surpcnt = surpcnt + 1;
-        sumsurp = sumsurp + ( y(m) - sp(m) );
+        sumsurp = sumsurp + ( y(2) - sp(2) );
     end
     % Accumulate statistics when power dispatched to the grid falls below set point
-    if ( y(m) + epsilon < sp(m) )
+    if ( y(2) + epsilon < sp(2) )
         dfctcnt = dfctcnt + 1;
-        sumdfct = sumdfct + ( sp(m) - y(m) );
+        sumdfct = sumdfct + ( sp(2) - y(2) );
     end
     
     % Write output from simulation iteration to file
@@ -225,7 +251,11 @@ fprintf( rsltfid, ...
 fclose( simfid );
 fclose( rsltfid );
 
-timeelap = toc( timesta );  % Measure elapsed time for execution of program
+% Write to terminal the number of iterations for which the multi-period
+% optimal solution was not found by the MIQP solver
+fprintf( 'Multi-period optimal solution not found count: %d\n', noptmcnt );
+% Measure elapsed time for execution of program
+timeelap = toc( timesta );  
 fprintf( 'Elapsed time: %.1f seconds\n', timeelap );
-%Clear workspace for next simulation run
+% Clear workspace for next simulation run
 clear;
