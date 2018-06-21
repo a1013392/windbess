@@ -1,3 +1,8 @@
+# Firming wind power dispatch with battery energy storage.
+# Snowtown Stage 1 wind farm generation capacity: 99 MW = 1.0 p.u.
+# Per unit power rating of utility-scale battery is 0.8 times its per unit energy capacity.
+# 5-minute dispatch, and 30-minute prediction/ control horizons.
+#
 #DUID	SimHrzn	CtrlHrzn	WindCap	BattCap	BattRt	CtrlWgt	DptchInt	MeanAbsErr	NormMeanAbsErr	MeanSqrErr	SurplusDptchInt	MeanDptchSurplus	NormMeanDptchSurplus	DeficitDptchInt	MeanDptchDeficit	NormMeanDptchDeficit
 SNOWTWN1	105120	6	99.000000	0.000000	0.000000	1^n	86051	6.347440	6.411555	93.763184	39040	6.756614	6.824863	47010	6.007771	6.068456
 SNOWTWN1	105120	6	99.000000	4.950000	3.960000	1^n	86051	4.460097	4.505149	67.206191	24545	7.036831	7.107910	37941	5.573825	5.630126

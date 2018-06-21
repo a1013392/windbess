@@ -21,7 +21,7 @@ s = 4;          % Length of single-period state vector
 q = 3;          % Length of single-period control increment vector
 d = 1;          % Number of binary (dummy) variables for each time interval
                 % in the control horizon, w
-n = 18;          % Number of time intervals in prediciton and control horizons
+n = 6;         % Number of time intervals in prediciton and control horizons
  
 epsilon = 1e-12;    % Round-off tolerance to account for errors arising
                     % from floating point operations
@@ -33,17 +33,17 @@ eta = sqrt(0.80);   % One-way battery charge/discharge efficiency (measured
                     % over the full month of December 2017)
 
 % Base (MW and MWh) for per-unit (dimensionless) quantities
-if ( ~exist('pubase', 'var') ) pubase = 100.0; end
+if ( ~exist('pubase', 'var') ) pubase = 99.0; end
 % Define power and energy in terms of per unit base quantity
 % Wind farm registered capacity (MW)
 if ( ~exist('windcap', 'var') ) windcap = 1.00*pubase; end
 % Battery storage capacity (MWh)  
-if ( ~exist('battcap', 'var') ) battcap = 0.50*pubase; end
+if ( ~exist('battcap', 'var') ) battcap = 0.25*pubase; end
 % Battery rated power (MW)
 battrt = 0.80*battcap;
 % Maximum "delta control" command -- amount that wind power set point is limited
 % below predicted available capacity
-deltacntl = 0.00*battcap;
+deltacntl = 0.20*battcap;
 
 % Write simulation parameters/ arguments to terminal
 fprintf( 'Wind farm capacity: %.2f MW\n', windcap );
@@ -58,7 +58,7 @@ C = [ 1 0 0 0; 0 -1 1 1 ];
 
 % Read UIGF forecasts and SCADA (measured) data from input file 
 if ( ~exist('uigffile', 'var') ) 
-	uigffile = '/Users/starca/uofa/projects/windbess/dev/data/in/uigf_meas_1711.dat';
+	uigffile = '/Users/starca/uofa/projects/windbess/dev/data/in/uigf_meas.dat';
 end
 [ N, duid, uigfutc, uigf, measutc, measaet, pwmeas, sdcmeas ] = ...
     uigfread( uigffile );
@@ -66,7 +66,7 @@ fprintf( 'Number of time steps in simulation horizon, N = %d\n', N );
 
 % Open simulation output file and write header
 if ( ~exist('simfile', 'var') ) 
-	simfile = '/Users/starca/uofa/projects/windbess/dev/data/out/windbess_sim_snowtwn1.dat';
+	simfile = '/Users/starca/uofa/projects/windbess/dev/data/out/windbess_sim_snowtwn1_xxxx.dat';
 end
 simfid = fopen( simfile, 'w' );
 fprintf( simfid, ['#DUID\tDptchUTC\tDptchAET\tUIGFUTC\tPwrDptch\t', ...
@@ -77,7 +77,7 @@ fprintf( simfid, ['#DUID\tDptchUTC\tDptchAET\tUIGFUTC\tPwrDptch\t', ...
 % case write header record if header flag is TRUE
 if ( ~exist('rslthdr', 'var') ) rslthdr = true; end 
 if ( ~exist('rsltfile', 'var') ) 
-	rsltfile = '/Users/starca/uofa/projects/windbess/dev/data/out/windbess_rslt_snowtwn1_hrzn120.dat';
+	rsltfile = '/Users/starca/uofa/projects/windbess/dev/data/out/windbess_rslt_snowtwn1_xxxx.dat';
 end
 if ( exist(rsltfile, 'file') )
     rsltfid = fopen( rsltfile, 'a' );
