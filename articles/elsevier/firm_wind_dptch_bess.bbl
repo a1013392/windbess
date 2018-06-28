@@ -1,0 +1,97 @@
+\begin{thebibliography}{10}
+\expandafter\ifx\csname url\endcsname\relax
+  \def\url#1{\texttt{#1}}\fi
+\expandafter\ifx\csname urlprefix\endcsname\relax\def\urlprefix{URL }\fi
+\expandafter\ifx\csname href\endcsname\relax
+  \def\href#1#2{#2} \def\path#1{#1}\fi
+
+\bibitem{SAER17}
+{Australian Energy Market Operator}, {S}outh {A}ustralian electricity report,
+  {S}outh {A}ustralian advisory functions,
+  \url{http://www.aemo.com.au/Electricity/National-Electricity-Market-NEM/Planning-and-forecasting/South-Australian-Advisory-Functions}
+  (Nov. 2017).
+
+\bibitem{WB16}
+T.~Wood, D.~Blowers, Keeping the lights on: Lessons from {S}outh {A}ustralia's
+  power shock, Energy program, {Grattan Institute},
+  \url{http://grattan.edu.au/report/keeping-the-lights-on-lessons-from-south-australias-power-shock/}
+  (Sep. 2016).
+
+\bibitem{AER16}
+{Australian Energy Regulator}, Electricity spot prices above \$5000/{MW}h:
+  {S}outh {A}ustralia, 13 {J}uly 2016, Performance report,
+  \url{https://www.aer.gov.au/wholesale-markets/market-performance/prices-above-5000-mwh-13-july-2016-sa}
+  (Oct. 2016).
+
+\bibitem{TREB16}
+S.~Tarca, M.~Roughan, N.~Ertugrul, N.~Bean, Dispatchability of wind power with
+  battery energy storage in {S}outh {A}ustralia, Energy Procedia 110 (2017)
+  223--228.
+
+\bibitem{HALBB14}
+D.~Hamalay, M.~Antonishen, K.~Lajoie, A.~Bostrom, T.~K.~A. Brekken, Improving
+  wind farm dispatchability using model predictive control for optimal
+  operation of grid-scale energy storage, Energies 7~(9) (2014) 5847--5862.
+
+\bibitem{BYJYHH11}
+T.~K.~A. Brekken, A.~Yokochi, A.~von Jouanne, Z.~Z. Yen, H.~M. Hapke, D.~A.
+  Hamalay, Optimal energy storage sizing and control for wind power
+  applications, IEEE Transactions on Sustainable Energy 2~(1) (2011) 69--77.
+
+\bibitem{KKSA13}
+A.~Khatamianfar, M.~Khalid, A.~V. Savkin, V.~G. Agelidis, Improving wind farm
+  dispatch in the {A}ustralian electricity market with battery energy storage
+  using model predictive control, IEEE Transactions on Sustainable Energy 4~(3)
+  (2013) 745--755.
+
+\bibitem{KS10}
+M.~Khalid, A.~V. Savkin, A model predictive control approach to the problem of
+  wind power smoothing with controlled battery storage, Renewable Energy 35~(7)
+  (2010) 1520--1526.
+
+\bibitem{TBBH10}
+S.~Teleke, M.~E. Baran, S.~Bhattacharya, A.~Q. Huang, Optimal control of
+  battery energy storage for wind farm dispatching, IEEE Transactions on Energy
+  Conversion 25~(3) (2010) 787--794.
+
+\bibitem{YCTL10}
+D.~L. Yao, S.~S. Choi, K.~J. Tseng, T.~T. Lie, Determination of a dispatch
+  strategy to maximize income for a wind turbine-{BESS} power station, in:
+  International Power and Energy Conference, Institute of Electrical and
+  Electronics Engineers, 2010, singapore.
+
+\bibitem{YCTL12}
+D.~L. Yao, S.~S. Choi, K.~J. Tseng, T.~T. Lie, Determination of short-term
+  power dispatch schedule for a wind farm incorporated with dual-battery energy
+  storage scheme, IEEE Transactions on Sustainable Energy 3~(1) (2012) 74--84.
+
+\bibitem{YCTL14}
+D.~L. Yao, S.~S. Choi, K.~J. Tseng, T.~T. Lie, Frequency control ancillary
+  service provided by a wind farm: Dual-{BESS} scheme, Journal of Modern Power
+  Systems and Clean Energy 2~(2) (2014) 93--103.
+
+\bibitem{MNAC17}
+A.~Masoumzadeh, E.~Nekouei, T.~Alpcan, D.~Chattopadhyay, Impact of optimal
+  storage allocation on price volatility in energy-only electricity markets,
+  IEEE Transactions on Power Systems PP~(99) (2017) 1--12.
+
+\bibitem{AEMO16b}
+{Australian Energy Market Operator}, Australian wind energy forecasting system,
+  Market operations,
+  \url{http://www.aemo.com.au/Electricity/National-Electricity-Market-NEM/Planning-and-forecasting/Solar-and-wind-energy-forecasting}
+  (May 2016).
+
+\bibitem{NTNDP16}
+{Australian Energy Market Operator}, National transmission network development
+  plan, Planning report,
+  \url{https://www.aemo.com.au/Electricity/National-Electricity-Market-NEM/Planning-and-forecasting/National-Transmission-Network-Development-Plan}
+  (Dec. 2016).
+
+\bibitem{FINKEL17}
+A.~Finkel, K.~Moses, C.~Munro, T.~Effeney, M.~O'Kane, Independent review into
+  the future security of the {N}ational {E}lectricity {M}arket: Blueprint for
+  the future, Planning report, {Commonwealth of Australia},
+  \url{https://www.energy.gov.au/publications/independent-review-future-security-national-electricity-market-blueprint-future}
+  (Jun. 2017).
+
+\end{thebibliography}

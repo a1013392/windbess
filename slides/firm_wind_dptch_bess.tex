@@ -138,7 +138,7 @@
 	\and
 	\texttt{silvio.tarca@adelaide.edu.au}\\
 }	
-\date[June 2018]{Prepared for Tilt Renewables\\June 2018}
+\date[July 2018]{Prepared for Tilt Renewables\\July 2018}
 \subject{}
 
 
@@ -162,11 +162,11 @@
 	\maketitle
 	
 \note[item]{
-This research has been undertaken jointly with Matt Roughan, Nesimi Ertugrul and Nigel Bean
+This research is funded by the ARC Centre of Excellence for Mathematical \& Statistical Frontiers 
 }
 \note[item]{
-It is funded by the ARC Centre of Excellence for Mathematical \& Statistical Frontiers and the Centre for Energy Technology at The University of Adelaide 
-}	
+We acknowledge the support of Tilt Renewables who have granted the University of Adelaide access to their confidential unconstrained intermittent generation forecasts 
+}
 \end{frame}
 \usebackgroundtemplate{}
 
@@ -203,7 +203,10 @@ It is funded by the ARC Centre of Excellence for Mathematical \& Statistical Fro
 		\caption{Source: Australian Energy Market Operator}
 		\end{table}
 		
-		\item  Largest battery in the world is coupled to the Hornsdale wind farm in the state's mid-north
+		\vspace{-0.5em}
+		\item  Largest battery in the world (100~MW/ 129~MWh) is coupled to the Hornsdale wind farm
+		
+		\item  Tilt Renewables has announced that it will connect a solar farm (44~MW) and utility-scale battery (21~MW/ 26~MWh) to its Snowtown wind farm (369~MW), and build a pumped-hydro storage facility (300~MW/ 1350~MWh)
 		
 		\item  SA government has announced a policy to create the world's largest virtual power plant --- 50,000 households equipped with solar panels and a battery
 		
@@ -229,14 +232,16 @@ It is funded by the ARC Centre of Excellence for Mathematical \& Statistical Fro
 		
 		\item  During the 06:30 trading interval on 13 July 2016, wholesale electricity prices in SA spiked to \$7,068/MWh
 		\begin{itemize}
-			\item  Australian Energy Regulator identified wind forecast error as the major contributing factor to the price spike
-			\item  Half-an-hour ahead of the trading interval semi-scheduled wind power in SA was forecast to be 820MW, but actual output was only 600MW
+			\item  Australian Energy Regulator\footnotemark[3] identified wind forecast error as the major contributing factor to the price spike
+			\item  Half-an-hour ahead of the trading interval semi-scheduled wind power in SA was forecast to be 820~MW, but actual output was only 600~MW
 		\end{itemize}
 		
 	\end{itemize}
 
 \footnotesize{
 \footnotetext[2]{T.~Wood and D.~Blowers (Sep.~2016).  Keeping the lights on: Lessons from South Australia's power shock.  Grattan Institute.
+}
+\footnotetext[3]{Australian Energy Regulator (Oct.~2016).  Electricity spot prices above \$5000/MWh: South Australia, 13 July 2016.
 }
 \par
 }
@@ -253,16 +258,20 @@ It is funded by the ARC Centre of Excellence for Mathematical \& Statistical Fro
 		
 		\item  Examine the use of battery energy storage to firm wind power dispatch
 		
-		\item  Coupling a utility-scale battery to a wind farm would serve to address recommendations in the Finkel Report\footnotemark[3]
+		\item  Coupling a utility-scale battery to a wind farm would serve to address recommendations in the Finkel Report\footnotemark[4]
 		\begin{itemize}
 			\item  ``Require new generators to have fast frequency response capability''
-			\item  ``The Generator Reliability Obligation should include undertaking a forward looking reliability assessment, \ldots, to inform requirements on new generators to ensure adequate dispatchable capacity is present in each region''
+			\item  ``The Generator Reliability Obligation should include undertaking a forward looking regional reliability assessment, \ldots, to inform requirements on new generators to ensure adequate dispatchable capacity is present in each region''
 		\end{itemize}
 		
+		\item  AEMO\footnotemark[5] recommends ``scheduled battery storage'' as a means for providing frequency regulation to bolster resilience of the SA power system
 	\end{itemize}
 	
 \footnotesize{
-\footnotetext[3]{Dr Alan Finkel, Chief Scientist, Chair of the Expert Panel, Ms Karen Moses, Ms Chloe Munro, Mr Terry Effeney, Professor Mary O'Kane (June 2017).  Independent review into the future security of the National Electricity Market: Blueprint for the future.
+
+\footnotetext[4]{Dr Alan Finkel, Chief Scientist, Chair of the Expert Panel, Ms Karen Moses, Ms Chloe Munro, Mr Terry Effeney, Professor Mary O'Kane (June 2017).  Independent review into the future security of the National Electricity Market: Blueprint for the future.
+}
+\footnotetext[5]{Australian Energy Market Operator (Dec.~2016).  National transmission network development plan.
 }
 \par
 }
@@ -514,7 +523,7 @@ To ensure linear complementarity of battery charge and discharge control signals
 	\framesubtitle{Wind farm and utility-scale battery data}
 
 	\begin{itemize}
-		\item  Perform virtual trials on the 99MW Snowtown (Stage 1) wind farm
+		\item  Perform virtual trials on the 99~MW Snowtown (Stage 1) wind farm
 		\begin{itemize}
 			\item  5-minute dispatch intervals from 2017-04-01 00:00:00 to 2018-03-31 23:55:00
 			\item  30-minute prediction and control horizons comprising $n=6$ five-minute dispatch intervals
@@ -547,9 +556,9 @@ To ensure linear complementarity of battery charge and discharge control signals
 		\item  Report power system quantities on a per unit (p.u.) basis
 		\begin{itemize}
 			\item  Per-unit system expresses quantities in SI units as a ratio relative to base quantities
-			\item  Choose 99MW (nominal capacity of the Snowtown Stage 1) as the base quantity for power, i.e., nominal capacity of Snowtown Stage 1 is 1.0 p.u. 
-			\item  For simplicity choose 99MWh as the base quantity for energy, e.g., battery with energy capacity of 49.5MWh translates to 0.5 p.u.
-			\item  Fix power rating of battery to 0.8 times its energy capacity, e.g., battery with energy capacity of 0.5 p.u.\ has a power rating of 0.4 p.u.
+			\item  Choose 99~MW (nameplate capacity of Snowtown Stage 1) as the base quantity for power, i.e., generation capacity of Snowtown Stage 1 is 1.0~p.u. 
+			\item  For simplicity choose 99~MWh as the base quantity for energy, e.g., battery with energy capacity of 49.5~MWh translates to 0.5~p.u.
+			\item  Fix per unit power rating of battery to 0.8 times its per unit energy capacity, e.g., battery with energy capacity of 0.5~p.u.\ has a power rating of 0.4~p.u.
 		\end{itemize}
 				
 	\end{itemize}
@@ -569,7 +578,41 @@ To ensure linear complementarity of battery charge and discharge control signals
 		}
 	\end{figure}
 	
-	{\scriptsize \textit{Normalised mean absolute error (NMAE) is calculated as the absolute difference between wind power forecast and actual output divided by the nominal capacity of the wind farm}
+	{\scriptsize \textit{Normalised mean absolute error (NMAE) is calculated as the absolute difference between forecast and actual output divided by the nameplate generation capacity}
+	\par
+	}
+
+\end{frame}
+
+%%=========================================================================================%%
+\begin{frame}
+	\frametitle{\large Snowtown wind farm (1.0 p.u.) coupled with a utility-scale battery}
+	\framesubtitle{Dispatch intervals in which power dispatched to the grid is less than scheduled power}
+
+	\begin{figure}[!h]
+		\centering
+    		\label{fig:disp_wind_bess}
+		\scalebox{0.75}{
+			\input{plot_wind_bess_nmae_deficit }
+		}
+	\end{figure}
+
+\end{frame}
+
+%%=========================================================================================%%
+\begin{frame}
+	\frametitle{\large Snowtown wind farm (1.0 p.u.) coupled with a utility-scale battery}
+	\framesubtitle{Battery state of charge (SOC) during simulation horizon}
+
+	\begin{figure}[!h]
+		\centering
+    		\label{fig:disp_wind_bess}
+		\scalebox{0.60}{
+			\input{plot_wind_bess_soc}
+		}
+	\end{figure}
+	
+	{\scriptsize \textit{Battery with energy capacity 0.3 p.u.\ coupled to Snowtown wind farm with nominal capacity 1.0 p.u.\\Battery SOC bounded from below (12.5\% of energy capacity) and above (87.5\%)}
 	\par
 	}
 
@@ -606,45 +649,26 @@ To ensure linear complementarity of battery charge and discharge control signals
 %\end{frame}
 
 %%=========================================================================================%%
-\begin{frame}
-	\frametitle{\large Snowtown wind farm (1.0 p.u.) coupled with a utility-scale battery}
-	\framesubtitle{Dispatch intervals in which power dispatched to the grid is less than scheduled power}
-
-	\begin{figure}[!h]
-		\centering
-    		\label{fig:disp_wind_bess}
-		\scalebox{0.75}{
-			\input{plot_wind_bess_nmae_deficit }
-		}
-	\end{figure}
-
-\end{frame}
-
 %%=========================================================================================%%
-\begin{frame}
-	\frametitle{\large Snowtown wind farm (1.0 p.u.) coupled with a utility-scale battery}
-	\framesubtitle{Battery state of charge (SOC) during simulation horizon}
-
-	\begin{figure}[!h]
-		\centering
-    		\label{fig:disp_wind_bess}
-		\scalebox{0.60}{
-			\input{plot_wind_bess_soc}
-		}
-	\end{figure}
-	
-	{\scriptsize \textit{Battery with energy capacity 0.25 p.u.\ coupled to Snowtown wind farm with nominal capacity 1.0 p.u.\\Battery SOC bounded from below (12.5\% of energy capacity) and above (87.5\%)}
-	\par
-	}
-
-\end{frame}
-
+\section{Conclusion}
 
 %%=========================================================================================%%
 \begin{frame}
 	\frametitle{Direction of future research}
 	\framesubtitle{}
+	
+	\begin{itemize}
+		\item  Are there market design and/or power system security challenges faced by Tilt Renewables with the integration of its portfolio of renewable energy resources?
+		\begin{itemize}
+			\item  Snowtown wind farm (369 MW)
+			\item  Snowtown solar farm (44 MW)
+			\item  Snowtown battery energy storage system (21 MW/ 26 MWh)
+			\item  Highbury pumped-hydro storage facility (300 MW/ 1350 MWh)
+		\end{itemize}
+		
+		\item  Can the University of Adelaide help tackle these challenges through empirical research?
 
+	\end{itemize}
 	
 \end{frame}
 

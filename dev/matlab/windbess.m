@@ -38,12 +38,12 @@ if ( ~exist('pubase', 'var') ) pubase = 99.0; end
 % Wind farm registered capacity (MW)
 if ( ~exist('windcap', 'var') ) windcap = 1.00*pubase; end
 % Battery storage capacity (MWh)  
-if ( ~exist('battcap', 'var') ) battcap = 0.25*pubase; end
+if ( ~exist('battcap', 'var') ) battcap = 0.30*pubase; end
 % Battery rated power (MW)
 battrt = 0.80*battcap;
 % Maximum "delta control" command -- amount that wind power set point is limited
 % below predicted available capacity
-deltacntl = 0.20*battcap;
+deltacntl = 0.00*battcap;
 
 % Write simulation parameters/ arguments to terminal
 fprintf( 'Wind farm capacity: %.2f MW\n', windcap );
@@ -66,7 +66,7 @@ fprintf( 'Number of time steps in simulation horizon, N = %d\n', N );
 
 % Open simulation output file and write header
 if ( ~exist('simfile', 'var') ) 
-	simfile = '/Users/starca/uofa/projects/windbess/dev/data/out/windbess_sim_snowtwn1_xxxx.dat';
+	simfile = '/Users/starca/uofa/projects/windbess/dev/data/out/windbess_sim_snowtwn1.dat';
 end
 simfid = fopen( simfile, 'w' );
 fprintf( simfid, ['#DUID\tDptchUTC\tDptchAET\tUIGFUTC\tPwrDptch\t', ...

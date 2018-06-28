@@ -18,7 +18,7 @@ set style line 6 linecolor rgb 'red' linewidth 1 dashtype 1 pointtype 1
 set style line 7 linecolor rgb 'medium-blue' linewidth 1 dashtype 1 pointtype 1
 
 #------------------------------------------------------------------------------#
-cf = 0.349		# Capacity factor of SNOWTWN1 wind farm (2016-17)
+cf = 0.328		# Capacity factor of SNOWTWN1 wind farm (2016-17)
 bc = 99.0		# Energy capacity (MWh) of battery coupled to SNOWTWN1 wind farm
 
 #------------------------------------------------------------------------------#
@@ -32,7 +32,8 @@ bc = 99.0		# Energy capacity (MWh) of battery coupled to SNOWTWN1 wind farm
 #
 set output 'plot_wind_bess_nmae.tex'
 set key inside right top Left reverse nobox
-set key width -10
+set key height 1.0
+set key width -8.0
 #unset key
 set xrange [0.00:1.00]
 set yrange [0.0:8.0]
@@ -43,8 +44,8 @@ set mytics 2
 set xlabel 'Battery energy capacity, p.u.'
 set ylabel 'Normalised mean absolute error, \%' 
 set arrow from cf,0.0 to cf,8.0 nohead ls 6
-#set label at 0.34,0.25 sprintf("Capacity factor = %.3f", cf) right
-set label at 0.36,4.0 '\small Capacity factor = 0.349' left
+#set label at 0.34,4.0 sprintf("Capacity factor = %.3f", cf) left
+set label at 0.34,4.0 '\small Capacity factor = 0.328' left
 plot	'../data/out/windbess_rslt_snowtwn1.dat' using ($5/$4):10 title '\small No curtailment' with linespoints ls 1, \
 		'../data/out/windbess_rslt_snowtwn1_curtbess05.dat' using ($5/$4):10 title '\small Maximum curtailment 5\%' with linespoints ls 2, \
 		'../data/out/windbess_rslt_snowtwn1_curtbess10.dat' using ($5/$4):10 title '\small Maximum curtailment 10\%' with linespoints ls 3
@@ -63,7 +64,6 @@ pause -1 'Hit any key to continue'
 #
 set output 'plot_wind_bess_nmae_curtgen.tex'
 set key inside right top Left reverse nobox
-set key width -10
 #unset key
 set xrange [0.00:1.00]
 set yrange [0.0:8.0]
@@ -73,9 +73,8 @@ set ytics 0.0, 1.0, 8.0 format '%.1f'
 set mytics 2
 set xlabel 'Battery energy capacity, p.u.'
 set ylabel 'Normalised mean absolute error, \%' 
-set arrow from cf,0.0 to cf,8.0 nohead ls 6
-#set label at 0.34,0.25 sprintf("Capacity factor = %.3f", cf) right
-set label at 0.36,4.0 '\small Capacity factor = 0.349' left
+#set arrow from cf,0.0 to cf,8.0 nohead ls 6
+#set label at 0.34,4.0 '\small Capacity factor = 0.328' left
 plot	'../data/out/windbess_rslt_snowtwn1.dat' using ($5/$4):10 title '\small No curtailment' with linespoints ls 1, \
 		'../data/out/windbess_rslt_snowtwn1_curtgen025.dat' using ($5/$4):10 title '\small Maximum curtailment 2.5\%' with linespoints ls 2, \
 		'../data/out/windbess_rslt_snowtwn1_curtgen05.dat' using ($5/$4):10 title '\small Maximum curtailment 5\%' with linespoints ls 4, \
@@ -137,8 +136,7 @@ set mytics 2
 set xlabel 'Battery energy capacity, p.u.'
 set ylabel 'Normalised mean absolute error, \%' 
 set arrow from cf,0.0 to cf,12.0 nohead ls 6
-#set label at 0.34,0.25 sprintf("Capacity factor = %.3f", cf) right
-set label at 0.36,8.0 '\small Capacity factor = 0.349' left
+set label at 0.34,8.0 '\small Capacity factor = 0.328' left
 plot	'../data/out/windbess_rslt_snowtwn1.dat' using ($5/$4):10 title '\small 30-minute control horizon' with linespoints ls 1, \
 		'../data/out/windbess_rslt_snowtwn1_hrzn60.dat' using ($5/$4):10 title '\small 60-minute control horizon' with linespoints ls 2, \
 		'../data/out/windbess_rslt_snowtwn1_hrzn90.dat' using ($5/$4):10 title '\small 90-minute control horizon' with linespoints ls 3	
@@ -177,8 +175,8 @@ set xtics axis rotate by 90 offset 0,-2.25 font '\textnormal, 8pt'
 #set format x '%d %b'
 set format x '%b-%y'
 unset xlabel
-set yrange [0.0:25.0]
-set ytics out 0.0, 2.5, 25.0 format '%.1f'
+set yrange [0.0:29.7]
+set ytics out 0.0, 2.97, 29.7 format '%.1f'
 set mytics 2
 set ylabel 'Battery state of charge, MWh'
 set y2range [0.0:100.0]
